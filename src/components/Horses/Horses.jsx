@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import SelctionsTable from '@/components/Horses/SelectionsTable';
 import MeetingEvents from '@/components/Horses/MeetingEvents';
 import ControlPanel from '@/components/Horses/ControlPanel';
@@ -23,6 +23,8 @@ const Horses = () => {
   const [totalFurlongs, setTotalFurlongs] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [tolerance, setTolerance] = useState(2);
+  const [selectedOption, setSelectedOption] = useState('');
+  const [isOptionSelected, setIsOptionSelected] = useState(false);
   const [optimalParameters, setOptimalParameters] = useState({
     avr_number_of_runs: '',
     avr_years_in_competition: '',
@@ -32,8 +34,6 @@ const Horses = () => {
     avr_distance: '',
   });
 
-  const [selectedOption, setSelectedOption] = useState('');
-  const [isOptionSelected, setIsOptionSelected] = useState(false);
   const [meetings, setMeetings] = useState([]);
   const [selectedMeeting, setSelectedMeeting] = useState('');
   const [selectedMeetingTime, setSelectedMeetingTime] = useState('');
@@ -41,55 +41,65 @@ const Horses = () => {
   const [runners, setRunners] = useState([]);
 
   useEffect(() => {
-    axios.get(`${baseURL}/preparation/GetTodayMeeting`, {
-      params: { date: selectedDate }
-    }).then((response) => {
-      const meetingsData = response?.data || [];
-      setMeetings(meetingsData);
-      if (meetingsData.length > 0) {
-        setSelectedMeeting(meetingsData[0].event_name);
-        const times = [...new Set(meetingsData[0].event_time.split(','))];
-        if (times.length > 0) {
-          setSelectedMeetingTime(meetingsData[0].event_time);
-          setSelectedTime(times[0]);
+    const fetchMeetings = async () => {
+      try {
+        const response = await axios.get(`${baseURL}/preparation/GetTodayMeeting`, {
+          params: { date: selectedDate }
+        });
+        const meetingsData = response?.data || [];
+        setMeetings(meetingsData);
+        if (meetingsData.length > 0) {
+          setSelectedMeeting(meetingsData[0].event_name);
+          const times = [...new Set(meetingsData[0].event_time.split(','))];
+          if (times.length > 0) {
+            setSelectedMeetingTime(meetingsData[0].event_time);
+            setSelectedTime(times[0]);
+          }
         }
+      } catch (error) {
+        console.error("Error fetching meetings:", error);
       }
-    }).catch((error) => {
-      console.error("Error fetching meetings:", error);
-    });
-  }, [selectedDate]);
+    };
+
+    fetchMeetings();
+  }, [selectedDate, baseURL]);
 
   useEffect(() => {
-    if (selectedMeeting) {
-      axios.get(`${baseURL}/preparation/GetMeetingRunners`, {
-        params: {
-          event_name: selectedMeeting,
-          event_time: selectedTime,
-          event_date: selectedDate,
-          race_type: raceType
+    if (selectedMeeting && selectedTime) {
+      const fetchRunners = async () => {
+        try {
+          const response = await axios.get(`${baseURL}/preparation/GetMeetingRunners`, {
+            params: {
+              event_name: selectedMeeting,
+              event_time: selectedTime,
+              event_date: selectedDate,
+              race_type: raceType
+            }
+          });
+          setRunners(response?.data?.analysisDataResponse || []);
+          setOptimalParameters(response?.data?.analysisDataResponse?.parameters || {});
+        } catch (error) {
+          console.error("Error fetching runners:", error);
         }
-      }).then((response) => {
-        setRunners(response?.data?.analysisDataResponse || []);
-        setOptimalParameters(response?.data?.analysisDataResponse?.parameters || {});
-      }).catch((error) => {
-        console.error("Error fetching runners:", error);
-      });
+      };
+
+      fetchRunners();
     }
-  }, [selectedMeeting, selectedTime, selectedDate, raceType]);
+  }, [selectedMeeting, selectedTime, selectedDate, raceType, baseURL]);
 
   const handPickWinner = async () => {
-    setIsLoading(true);  
+    setIsLoading(true);
     try {
       const response = await axios.post(`${baseURL}/analysis/RacePicksSimulation`, {
         race_type: raceType,
         race_distance: totalFurlongs,
         tolerance: tolerance,
-        optimal_num_runs: runners.parameters.optimal_num_runs,
-        optimal_num_years_in_competition: runners.parameters.optimal_num_years_in_competition,
-        optimal_num_wins: runners.parameters.optimal_num_wins,
-        optimal_rating: runners.parameters.optimal_rating,
-        optimal_position: runners.parameters.optimal_position,
-        optimal_distance: runners.parameters.optimal_distance,
+        optimal_num_runs: runners.parameters?.optimal_num_runs || '',
+        optimal_num_years_in_competition: runners.parameters?.optimal_num_years_in_competition || '',
+        optimal_num_wins: runners.parameters?.optimal_num_wins || '',
+        optimal_rating: runners.parameters?.optimal_rating || '',
+        optimal_position: runners.parameters?.optimal_position || '',
+        optimal_distance: runners.parameters?.optimal_distance || '',
         event_name: selectedMeeting,
         event_date: selectedDate,
         event_time: selectedTime,
@@ -99,8 +109,8 @@ const Horses = () => {
         },
       });
 
-      setModalData(response?.data?.simulationResults || {});
       console.log("Result Data", response?.data?.simulationResults);
+      setModalData(response?.data?.simulationResults || {});
       setIsModalOpen(true);
     } catch (error) {
       console.error("Error in picking winner:", error);
@@ -109,38 +119,38 @@ const Horses = () => {
     }
   };
 
-  const handleOptimalParamsChange = (e) => {
+  const handleOptimalParamsChange = useCallback((e) => {
     setOptimalParams(e.target.checked);
-  };
+  }, []);
 
-  const handleRaceTypeChange = (e) => {
+  const handleRaceTypeChange = useCallback((e) => {
     setRaceType(e.target.value);
-  };
+  }, []);
 
-  const handleMilesChange = (e) => {
+  const handleMilesChange = useCallback((e) => {
     setMiles(e.target.value);
-  };
+  }, []);
 
-  const handleFurlongsChange = (e) => {
+  const handleFurlongsChange = useCallback((e) => {
     setFurlongs(e.target.value);
-  };
+  }, []);
 
-  const handleYardsChange = (e) => {
+  const handleYardsChange = useCallback((e) => {
     setYards(e.target.value);
-  };
+  }, []);
 
-  const handleToleranceChange = (e) => {
+  const handleToleranceChange = useCallback((e) => {
     setTolerance(e.target.value);
-  };
+  }, []);
 
-  const handleTimeClick = (time) => {
+  const handleTimeClick = useCallback((time) => {
     setSelectedTime(time);
     setDistanceM('');
     setDistanceF('');
     setDistanceY('');
-  };
+  }, []);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = useCallback((e) => {
     const { name, value } = e.target;
     setRunners((prevState) => ({
       ...prevState,
@@ -149,13 +159,17 @@ const Horses = () => {
         [name]: value,
       },
     }));
-  };
+  }, []);
 
-  const handleEventSelectChange = (event) => {
+  const handleEventSelectChange = useCallback((event) => {
     const selectedEventName = event.target.value;
+    console.log("Selected Event Name:", selectedEventName);
+
     setSelectedMeeting(selectedEventName);
 
     const selectedMeetingDetails = meetings.find(meeting => meeting.event_name === selectedEventName);
+    console.log("Selected Meeting Details:", selectedMeetingDetails);
+
     const times = [...new Set(selectedMeetingDetails?.event_time.split(','))];
     setSelectedMeetingTime(selectedMeetingDetails?.event_time || '');
     if (times.length > 0) {
@@ -163,23 +177,23 @@ const Horses = () => {
     } else {
       setSelectedTime('');
     }
-  };
+  }, [meetings]);
 
-  const yardOptions = [];
-  for (let i = 0; i <= 220; i++) {
-    yardOptions.push(
-      <option key={i} value={i}>
-        {i}
-      </option>
-    );
-  }
+  const yardOptions = useMemo(() => {
+    const options = [];
+    for (let i = 0; i <= 220; i++) {
+      options.push(
+        <option key={i} value={i}>
+          {i}
+        </option>
+      );
+    }
+    return options;
+  }, []);
 
   if (!meetings) {
     return <div>Loading...</div>;
   }
-console.log('totalFurlong', totalFurlongs);
-console.log('optimalParameters', optimalParameters);
-console.log('tolerancessss', tolerance);
 
   return (
     <>
@@ -190,7 +204,7 @@ console.log('tolerancessss', tolerance);
               <MeetingEvents
                 meetings={meetings}
                 handleEventSelectChange={handleEventSelectChange}
-                selectedOption={selectedOption}
+                // selectedOption={selectedOption}
                 isOptionSelected={isOptionSelected}
               />
             </div>
@@ -235,7 +249,7 @@ console.log('tolerancessss', tolerance);
             handleToleranceChange={handleToleranceChange}
             isLoading={isLoading}
             distanceM={distanceM}
-            distanceF={distanceF}           
+            distanceF={distanceF}
             distanceY={distanceY}
           />
         </div>

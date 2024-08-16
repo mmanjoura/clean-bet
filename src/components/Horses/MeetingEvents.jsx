@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 
-const MeetingEvents = ({ meetings, handleEventSelectChange, selectedOption, isOptionSelected }) => {
+const MeetingEvents = ({ meetings, handleEventSelectChange, isOptionSelected }) => {
 
   return (
     <div>
@@ -47,7 +47,7 @@ const MeetingEvents = ({ meetings, handleEventSelectChange, selectedOption, isOp
           id="meeting-select"
           className={`relative z-20 w-full appearance-none rounded border border-stroke bg-transparent px-12 py-3 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input ${isOptionSelected ? 'text-black dark:text-white' : ''
             }`}
-          value={selectedOption}
+          // value={selectedOption}
           onChange={handleEventSelectChange} // Remove the parentheses to pass the function reference
           aria-label="Select a meeting"
         >

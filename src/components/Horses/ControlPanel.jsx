@@ -28,7 +28,6 @@ const ControlPanel = ({
 }) => {
     const [rangeValue, setRangeValue] = useState(2);
     useEffect(() => {
-        // Sync the rangeValue with the tolerance prop whenever it changes
         setTolerance(tolerance);
     }, [tolerance]);
 
@@ -289,8 +288,7 @@ const ControlPanel = ({
                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary dark:border-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                                             onChange={handleYardsChange}
                                             value={yards}
-                                        >
-                                            <option value="">Yards</option>
+                                        >                                            
                                             {yardOptions}
                                         </select>
                                     </div>
