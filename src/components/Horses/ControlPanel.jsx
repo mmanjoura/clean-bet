@@ -7,6 +7,8 @@ import SwitcherThree from "@/components/Switchers/SwitcherThree";
 const ControlPanel = ({
     totalFurlongs,
     setTotalFurlongs,
+    tolerance,
+    setTolerance,
     optimalParameters,
     setOptimalParameters,
     raceType,
@@ -18,8 +20,17 @@ const ControlPanel = ({
     handleMilesChange,
     handleFurlongsChange,
     handleYardsChange,
+    handPickWinner,
+    isLoading,
+    distanceM,
+    distanceF,
+    distanceY,
 }) => {
     const [rangeValue, setRangeValue] = useState(2);
+    useEffect(() => {
+        // Sync the rangeValue with the tolerance prop whenever it changes
+        setTolerance(tolerance);
+    }, [tolerance]);
 
     useEffect(() => {
         // Ensure the local state matches the props when they change
@@ -49,11 +60,13 @@ const ControlPanel = ({
 
         return milesInFurlongs + furlongsFloat + furlongsFromYards;
     };
-    const handleInput = (e) => {
-        setRangeValue(e.target.value);
-        console.log("Range value: ", rangeValue);
-    };
 
+    const handleInput = (e) => {
+        const value = parseFloat(e.target.value);
+        console.log('Setting tolerance to:', value); // Debugging line
+        setRangeValue(value);
+        setTolerance(value);
+    };
 
     return (
         <>
@@ -166,18 +179,23 @@ const ControlPanel = ({
                                 </div>
 
                                 <div className="mt-6">
-                                    <label className="mb-3 block text-sm font-medium text-black dark:text-white">
-                                        Adjust Tolerance {rangeValue}
-                                    </label>
+                                    <div className="flex items-center">
+                                        <label className="block text-sm font-medium text-black dark:text-white mr-2">
+                                            Adjust Tolerance
+                                        </label>
+                                        <label className="text-sm font-medium text-black dark:text-white" style={{ color: '#2b96f0' }}>
+                                            {rangeValue}
+                                        </label>
+                                    </div>
                                     <input
                                         type="range"
                                         min="0"
                                         max="5"
-                                        step="0.01" // Adjust step size if needed
-                                        value={rangeValue}
+                                        step="0.01"
+                                        value={rangeValue} // Controlled by local state
                                         className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer"
                                         style={{
-                                            background: `linear-gradient(to right, #2b96f0 ${((rangeValue - 0) / (5 - 0)) * 100}%, #e5e7eb ${((rangeValue - 0) / (5 - 0)) * 100}%)`
+                                            background: `linear-gradient(to right, #2b96f0 ${(rangeValue / 5) * 100}%, #e5e7eb ${(rangeValue / 5) * 100}%)`,
                                         }}
                                         onInput={handleInput}
                                     />
@@ -283,9 +301,14 @@ const ControlPanel = ({
                                         href="#"
                                         className="inline-flex items-center justify-center rounded-md px-10 py-4 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-24"
                                         style={{ backgroundColor: '#2b96f0' }}
-                                        onClick={() => console.log("Pick button clicked")}
+                                        onClick={handPickWinner}
+                                        disabled={isLoading || !distanceM || !distanceF || !distanceY || !raceType} // Disable if raceType is not selected
                                     >
-                                        PICK
+                                        {isLoading ? (
+                                            <div className="spinner-border animate-spin inline-block w-4 h-4 border-2 rounded-full"></div>
+                                        ) : (
+                                            "Pick"
+                                        )}
                                     </Link>
                                 </div>
                             </div>

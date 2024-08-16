@@ -21,6 +21,8 @@ const Horses = () => {
   const [furlongs, setFurlongs] = useState('');
   const [yards, setYards] = useState('');
   const [totalFurlongs, setTotalFurlongs] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const [tolerance, setTolerance] = useState(2);
   const [optimalParameters, setOptimalParameters] = useState({
     avr_number_of_runs: '',
     avr_years_in_competition: '',
@@ -75,6 +77,38 @@ const Horses = () => {
     }
   }, [selectedMeeting, selectedTime, selectedDate, raceType]);
 
+  const handPickWinner = async () => {
+    setIsLoading(true);  
+    try {
+      const response = await axios.post(`${baseURL}/analysis/RacePicksSimulation`, {
+        race_type: raceType,
+        race_distance: totalFurlongs,
+        tolerance: tolerance,
+        optimal_num_runs: runners.parameters.optimal_num_runs,
+        optimal_num_years_in_competition: runners.parameters.optimal_num_years_in_competition,
+        optimal_num_wins: runners.parameters.optimal_num_wins,
+        optimal_rating: runners.parameters.optimal_rating,
+        optimal_position: runners.parameters.optimal_position,
+        optimal_distance: runners.parameters.optimal_distance,
+        event_name: selectedMeeting,
+        event_date: selectedDate,
+        event_time: selectedTime,
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      setModalData(response?.data?.simulationResults || {});
+      console.log("Result Data", response?.data?.simulationResults);
+      setIsModalOpen(true);
+    } catch (error) {
+      console.error("Error in picking winner:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleOptimalParamsChange = (e) => {
     setOptimalParams(e.target.checked);
   };
@@ -84,18 +118,19 @@ const Horses = () => {
   };
 
   const handleMilesChange = (e) => {
-    console.log('Miles input value:', e.target.value);
     setMiles(e.target.value);
   };
 
   const handleFurlongsChange = (e) => {
-    console.log('Furlongs input value:', e.target.value);
     setFurlongs(e.target.value);
   };
 
   const handleYardsChange = (e) => {
-    console.log('Yards input value:', e.target.value);
     setYards(e.target.value);
+  };
+
+  const handleToleranceChange = (e) => {
+    setTolerance(e.target.value);
   };
 
   const handleTimeClick = (time) => {
@@ -143,6 +178,9 @@ const Horses = () => {
     return <div>Loading...</div>;
   }
 console.log('totalFurlong', totalFurlongs);
+console.log('optimalParameters', optimalParameters);
+console.log('tolerancessss', tolerance);
+
   return (
     <>
       <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
@@ -180,6 +218,8 @@ console.log('totalFurlong', totalFurlongs);
           <ControlPanel
             totalFurlongs={totalFurlongs}
             setTotalFurlongs={setTotalFurlongs}
+            tolerance={tolerance}
+            setTolerance={setTolerance}
             optimalParameters={optimalParameters}
             setOptimalParameters={setOptimalParameters}
             raceType={raceType}
@@ -191,6 +231,12 @@ console.log('totalFurlong', totalFurlongs);
             handleMilesChange={handleMilesChange}
             handleFurlongsChange={handleFurlongsChange}
             handleYardsChange={handleYardsChange}
+            handPickWinner={handPickWinner}
+            handleToleranceChange={handleToleranceChange}
+            isLoading={isLoading}
+            distanceM={distanceM}
+            distanceF={distanceF}           
+            distanceY={distanceY}
           />
         </div>
       </div>
