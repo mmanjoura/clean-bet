@@ -26,7 +26,7 @@ const menuGroups = [
         children: [
           { label: "UK & Ireland", route: "/racing/meetings" },
           { label: "France", route: "/racing/stats" },
-          { label: "USA", route: "/racing/stats" },
+          { label: "Strike Rate", route: "/racing/stats" },
         ],
       },
       {
