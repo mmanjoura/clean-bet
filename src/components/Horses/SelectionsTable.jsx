@@ -85,7 +85,7 @@ const SelectionsTable = ({ runners }) => {
                     className={`flex items-left justify-left p-2.5 xl:p-5 flex-shrink-0 w-40 ${isChecked ? "line-through text-red-500" : ""
                       }`}
                   >
-                    <p className={`${runner?.duration > 3 ? 'text-meta-7' : 'text-meta-2'}`}>
+                    <p className={`${runner?.duration > 3 ? 'text-meta-7' : ''}`}>
                       {runner?.selection_name}
                     </p>
                   </div>

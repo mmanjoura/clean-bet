@@ -11,8 +11,7 @@ import axios from "axios";
 const Horses = () => {
   const baseURL = process.env.NEXT_PUBLIC_API_URL;
 
-  const today = new Date().toISOString().split('T')[0];
-  const [selectedDate, setSelectedDate] = useState(today);
+  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [distanceM, setDistanceM] = useState('');
   const [distanceF, setDistanceF] = useState('');
   const [distanceY, setDistanceY] = useState('');
@@ -22,13 +21,9 @@ const Horses = () => {
   const [yards, setYards] = useState('YARDS');
   const [totalFurlongs, setTotalFurlongs] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
-  const [tolerance, setTolerance] = useState(2);
-  const [isOptionSelected, setIsOptionSelected] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalData, setModalData] = useState(null);
-  const [randomIndex, setRandomIndex] = useState(0);
   const [isHandicapRace, setIsHandicapRace] = useState(false); // New state for checkbox
-  const [isChecked, setIsChecked] = useState(false);
   const [parameters, setParameters] = useState({
     avr_number_of_runs: '',
     avr_years_in_competition: '',
@@ -159,7 +154,6 @@ const Horses = () => {
     const milesFloat = parseFloat(miles) || 0;
     const furlongsFloat = parseFloat(furlongs) || 0;
     const yardsFloat = parseFloat(yards) || 0;
-
     const milesInFurlongs = milesFloat * 8;
     const furlongsFromYards = yardsFloat / 220;
     parameters.current_distance = milesInFurlongs + furlongsFloat + furlongsFromYards;
