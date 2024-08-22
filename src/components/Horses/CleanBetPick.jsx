@@ -12,26 +12,26 @@ const CleanBetPick = ({ totalFurlongs, raceType, flatWinner, hurdleWinner }) => 
   return (
     <div className="mt-4">
       <div>
-        <label className="text-md font-medium shadow-default">
+        <label className="text-md font-medium shadow-default block mb-2">
           CLEAN BET PICK ({raceType})
         </label>
-        <table className="w-full text-green-700 mt-2">
+        <table className="w-full text-green-700">
           <tbody>
             <tr>
-              <td className="font-bold">Selection Name:</td>
-              <td>{winnerData.selection_name || 'N/A'}</td>
+              <td className="font-bold py-2 pr-3">Selection Name:</td>
+              <td className="py-2">{winnerData.selection_name || 'N/A'}</td>
             </tr>
             <tr>
-              <td className="font-bold">Trainer:</td>
-              <td>{winnerData.trainer || 'N/A'}</td>
+              <td className="font-bold py-2 pr-3">Trainer:</td>
+              <td className="py-2">{winnerData.trainer || 'N/A'}</td>
             </tr>
             <tr>
-              <td className="font-bold">Owner:</td>
-              <td>{winnerData.owner || 'N/A'}</td>
+              <td className="font-bold py-2 pr-3">Owner:</td>
+              <td className="py-2">{winnerData.owner || 'N/A'}</td>
             </tr>
             <tr>
-              <td className="font-bold">Average Odds:</td>
-              <td>
+              <td className="font-bold py-2 pr-3">Average Odds:</td>
+              <td className="py-2">
                 {winnerData.avg_odds !== undefined
                   ? winnerData.avg_odds.toFixed(2)
                   : 'N/A'}

@@ -1,7 +1,7 @@
+// Meeting Date component
 import React from 'react';
 
 const MeetingsDate = ({ selectedDate, setSelectedDate }) => {
-
   const handleDateChange = (event) => {
     const date = event.target.value;
     setSelectedDate(date);

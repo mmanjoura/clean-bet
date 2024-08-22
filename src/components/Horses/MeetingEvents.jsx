@@ -1,7 +1,8 @@
+// Event Drop Select Component
 'use client';
-import React, { useState } from 'react';
+import React from 'react';
 
-const MeetingEvents = ({ meetings, handleEventSelectChange, isOptionSelected }) => {
+const MeetingEvents = ({ meetings, handleEventSelectChange }) => {
 
   return (
     <div>
@@ -45,10 +46,8 @@ const MeetingEvents = ({ meetings, handleEventSelectChange, isOptionSelected }) 
 
         <select
           id="meeting-select"
-          className={`relative z-20 w-full appearance-none rounded border border-stroke bg-transparent px-12 py-3 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input ${isOptionSelected ? 'text-black dark:text-white' : ''
-            }`}
-          // value={selectedOption}
-          onChange={handleEventSelectChange} // Remove the parentheses to pass the function reference
+          className={`relative z-20 w-full appearance-none rounded border border-stroke bg-transparent px-12 py-3 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input `}
+          onChange={handleEventSelectChange}
           aria-label="Select a meeting"
         >
           {meetings?.map((meeting) => (
@@ -57,8 +56,6 @@ const MeetingEvents = ({ meetings, handleEventSelectChange, isOptionSelected }) 
             </option>
           ))}
         </select>
-
-
         <span className="absolute right-4 top-1/2 z-10 -translate-y-1/2">
           <svg
             width="24"

@@ -1,57 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import TimeSelection from '@/components/Horses/TimeSelection';
-import { set } from 'date-fns';
+import React, { useState } from 'react';
 
-const SelectionsTable = ({ raceType, isHandicapRace, runners, selectedTime, selectedMeetingTime, handleTimeClick }) => {
+const SelectionsTable = ({ runners }) => {
   const [expandedRow, setExpandedRow] = useState(null);
   const [selectedRunners, setSelectedRunners] = useState([]);
-  const [isFlatNovice, setIsFlatNovice] = useState(false);
-  const [isHurdleNovice, setIsHurdleNovice] = useState(false);
 
   const handleToggle = (index) => {
     setExpandedRow(expandedRow === index ? null : index);
   };
 
   const handleCheckboxChange = (runnerName) => {
-    if (selectedRunners.includes(runnerName)) {
-      setSelectedRunners(selectedRunners.filter(name => name !== runnerName));
-    } else {
-      setSelectedRunners([...selectedRunners, runnerName]);
-    }
+    setSelectedRunners((prevSelectedRunners) =>
+      prevSelectedRunners.includes(runnerName)
+        ? prevSelectedRunners.filter((name) => name !== runnerName)
+        : [...prevSelectedRunners, runnerName]
+    );
   };
 
-  useEffect(() => {
-    if (raceType === "FLAT" && isHandicapRace) {
-      setIsFlatNovice(true);
-    }
-    if (raceType === "HURDLE" && isHandicapRace) {
-      setIsHurdleNovice(true);
-    }
-    if (raceType === "FLAT" && !isHandicapRace) {
-      setIsFlatNovice(false);
-    }
-    if (raceType === "HURDLE" && !isHandicapRace) {
-      setIsHurdleNovice(false);
-    }
-
-    console.log("isFlatNovice", isFlatNovice);
-    console.log("isHurdleNovice", isHurdleNovice);
-  }, [raceType, isHandicapRace]);
-
-
   return (
-    <div className="rounded-sm border border-stroke bg-white px-5 pb-2.5 pt-6 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
-
-
-      <div className="flex-grow xl:w-1/2"> {runners?.selections?.length || 0} Runners
-        <TimeSelection
-          selectedTime={selectedTime}
-          selectedMeetingTime={selectedMeetingTime}
-          handleTimeClick={handleTimeClick}
-        />
-      </div>
-
-
+    <>
       <div className="flex flex-col">
         {/* Header Row */}
         <div className="flex flex-nowrap rounded-sm bg-gray-2 dark:bg-meta-4 border-b border-stroke dark:border-strokedark">
@@ -62,17 +28,11 @@ const SelectionsTable = ({ raceType, isHandicapRace, runners, selectedTime, sele
             <h5 className="text-sm font-medium uppercase xsm:text-base">Name</h5>
           </div>
           <div className="p-2.5 text-center xl:p-5 flex-shrink-0 w-40">
-            <h5 className="text-sm font-medium uppercase xsm:text-base">&#8470; Rest Days</h5>
+            <h5 className="text-sm font-medium uppercase xsm:text-base">&#8470; D Rest</h5>
           </div>
           <div className="p-2.5 text-center xl:p-5 flex-shrink-0 w-40">
             <h5 className="text-sm font-medium uppercase xsm:text-base">&#8470; Runs</h5>
           </div>
-          {/* <div className="hidden p-2.5 text-center sm:block xl:p-5 flex-shrink-0 w-40">
-            <h5 className="text-sm font-medium uppercase xsm:text-base">&#8470; Y Cmpting</h5>
-          </div> */}
-          {/* <div className="hidden p-2.5 text-center sm:block xl:p-5 flex-shrink-0 w-40">
-            <h5 className="text-sm font-medium uppercase xsm:text-base">&#8470; Wins</h5>
-          </div> */}
           <div className="hidden p-2.5 text-center sm:block xl:p-5 flex-shrink-0 w-40">
             <h5 className="text-sm font-medium uppercase xsm:text-base">AVR Position</h5>
           </div>
@@ -104,10 +64,9 @@ const SelectionsTable = ({ raceType, isHandicapRace, runners, selectedTime, sele
                       className={`flex items-center justify-left p-2.5 xl:p-5 flex-shrink-0 w-12 ${[1, 2, 3].includes(runner.win_lose.position) ? 'text-meta-7' : ''}`}
                     >
                       <p className={`${['1', '2', '3'].includes(runner.win_lose.position) ? 'text-meta-3' : ''}`}>
-                        {runner.win_lose.position}
+                        {['1', '2', '3'].includes(runner.win_lose.position) ? runner.win_lose.position : ''}
                       </p>
                     </div>
-
                   )}
                   <div className="flex items-center justify-left p-2.5 xl:p-5 flex-shrink-0 w-12">
                     <input
@@ -123,93 +82,56 @@ const SelectionsTable = ({ raceType, isHandicapRace, runners, selectedTime, sele
                   </div>
 
                   <div
-                    className={`flex items-left justify-left p-2.5 xl:p-5 flex-shrink-0 w-40 ${isChecked ? "line-through-red" : ""
+                    className={`flex items-left justify-left p-2.5 xl:p-5 flex-shrink-0 w-40 ${isChecked ? "line-through text-red-500" : ""
                       }`}
                   >
-                    {/* If Number of year is greater than 3 years make red */}
-                    <p className={`${runner?.duration > 3 ? 'text-meta-7' : 'text-meta-4'}`}>
+                    <p className={`${runner?.duration > 3 ? 'text-meta-7' : 'text-meta-2'}`}>
                       {runner?.selection_name}
                     </p>
                   </div>
 
-                  {/* If isFlatNovice = true*/}
-
                   <div
-                    className={`flex items-left justify-left p-2.5 xl:p-5 flex-shrink-0 w-40 ${isChecked ? "line-through-red" : ""}`}
+                    className={`flex items-left justify-left p-2.5 xl:p-5 flex-shrink-0 w-40 ${isChecked ? "line-through text-red-500" : ""}`}
                   >
-                      {(!isFlatNovice && runner?.recovery_days > 30) ? (
-                      <p className="text-meta-7">{runner?.recovery_days.toFixed(2)}</p>
-                    ) : (!isHurdleNovice && runner?.recovery_days < 20) ? (
-                      <p className="text-meta-3">{runner?.recovery_days.toFixed(2)}</p>
-                    ) : (
-                      <p className="text-meta-5">{runner?.recovery_days.toFixed(2)}</p>
-                    )}
+                    <p className="text-meta-7">{runner?.recovery_days.toFixed(2)}</p>
                   </div>
 
                   <div
-                    className={`hidden flex items-left justify-left p-2.5 sm:flex xl:p-5 flex-shrink-0 w-40 ${isChecked ? "line-through-red" : ""
+                    className={`hidden flex items-left justify-left p-2.5 sm:flex xl:p-5 flex-shrink-0 w-40 ${isChecked ? "line-through text-red-500" : ""
                       }`}
-                  >                 
-                    {(!isFlatNovice && runner?.num_runs < 6) ? (
-                      <p className="text-meta-3">{runner?.num_runs.toFixed(2)}</p>
-                    ) : (!isHurdleNovice && runner?.num_runs < 20) ? (
-                      <p className="text-meta-3">{runner?.num_runs.toFixed(2)}</p>
-                    ) : (
-                      <p className="text-meta-7">{runner?.num_runs.toFixed(2)}</p>
-                    )}
+                  >
+                    <p className="text-meta-3">{runner?.num_runs.toFixed(2)}</p>
                   </div>
-
-                  {/* <div
-                    className={`hidden flex items-left justify-left p-2.5 sm:flex xl:p-5 flex-shrink-0 w-40 ${isChecked ? "line-through-red" : ""
-                      }`}
-                  >
-                    <p className="text-meta-5">{runner?.duration}</p>
-                  </div> */}
-
-                  {/* Additional Columns */}
-                  {/* <div
-                    className={`hidden flex items-left justify-left p-2.5 sm:flex xl:p-5 flex-shrink-0 w-40 ${isChecked ? "line-through-red" : ""
-                      }`}
-                  >
-                    <p className="text-meta-5">{runner?.win_count}</p>
-                  </div> */}
                   <div
-                    className={`hidden flex items-left justify-left p-2.5 sm:flex xl:p-5 flex-shrink-0 w-40 ${isChecked ? "line-through-red" : ""
+                    className={`hidden flex items-left justify-left p-2.5 sm:flex xl:p-5 flex-shrink-0 w-40 ${isChecked ? "line-through text-red-500" : ""
                       }`}
                   >
                     <p className="text-meta-5">{runner?.avg_position.toFixed(2)}</p>
                   </div>
                   <div
-                    className={`hidden flex items-left justify-left p-2.5 sm:flex xl:p-5 flex-shrink-0 w-40 ${isChecked ? "line-through-red" : ""
+                    className={`hidden flex items-left justify-left p-2.5 sm:flex xl:p-5 flex-shrink-0 w-40 ${isChecked ? "line-through text-red-500" : ""
                       }`}
                   >
                     <p className="text-meta-5">{runner?.avg_distance_furlongs.toFixed(2)}</p>
                   </div>
                   <div
-                    className={`hidden flex items-left justify-left p-2.5 sm:flex xl:p-5 flex-shrink-0 w-40 ${isChecked ? "line-through-red" : ""
+                    className={`hidden flex items-left justify-left p-2.5 sm:flex xl:p-5 flex-shrink-0 w-40 ${isChecked ? "line-through text-red-500" : ""
                       }`}
                   >
                     <p className="text-meta-5">{runner?.avg_rating.toFixed(2)}</p>
                   </div>
                   <div
-                    className={`hidden flex items-left justify-left p-2.5 sm:flex xl:p-5 flex-shrink-0 w-40 ${isChecked ? "line-through-red" : ""
+                    className={`hidden flex items-left justify-left p-2.5 sm:flex xl:p-5 flex-shrink-0 w-40 ${isChecked ? "line-through text-red-500" : ""
                       }`}
                   >
-                    {/* If it is FLAT Novice */}
-                    {isFlatNovice ? (
-                      <p className="text-meta-7">{runner?.avg_odds.toFixed(2)}</p>
-                    ) : (
-                      <p className="text-meta-7">{runner?.avg_odds.toFixed(2)}</p>
-                    )}
-
-
+                    <p className="text-meta-7">{runner?.avg_odds.toFixed(2)}</p>
                   </div>
                 </div>
 
                 {/* Accordion Content */}
                 {expandedRow === index && (
-                  <div className="w-full p-4 mt-2 bg-gray-100 dark:bg-gray-800">
-                    <div className="max-w-5xl">
+                  <div className="w-full p-4 mt-2 bg-gray-100 dark:bg-gray-800 flex justify-center">
+                    <div className="max-w-5xl w-full">
                       <table className="w-full border border-gray-300 border-collapse">
                         <thead>
                           <tr>
@@ -252,20 +174,20 @@ const SelectionsTable = ({ raceType, isHandicapRace, runners, selectedTime, sele
                                 key={raceIndex}
                                 className="bg-white even:bg-blue-50"
                               >
-                                <td className="border py-2 px-4">
+                                <td className="text-meta-5">
                                   {new Date(race.Date).toLocaleDateString("en-GB", {
                                     month: "2-digit",
                                     day: "2-digit",
                                     year: "numeric",
                                   })}
                                 </td>
-                                <td className="border py-2 px-4  font-semibold">
+                                <td className="text-meta-5">
                                   {race.Distance}f
                                 </td>
-                                <td className="border py-2 px-4 font-semibold">
+                                <td className="text-meta-5">
                                   {race.Position}
                                 </td>
-                                <td className="border py-2 px-4">{race.Event}</td>
+                                <td className="text-meta-5">{race.Event}</td>
                               </tr>
                             )
                           )}
@@ -277,9 +199,8 @@ const SelectionsTable = ({ raceType, isHandicapRace, runners, selectedTime, sele
               </div>
             );
           })}
-
       </div>
-    </div>
+    </>
   );
 };
 
