@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect, useCallback, useMemo, use } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import SelctionsTable from '@/components/Horses/SelectionsTable';
 import MeetingEvents from '@/components/Horses/MeetingEvents';
 import MeetingsDate from '@/components/Horses/MeetingsDate';
@@ -23,7 +23,8 @@ const Horses = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalData, setModalData] = useState(null);
-  const [isHandicapRace, setIsHandicapRace] = useState(false); // New state for checkbox
+  const [isHandicapRace, setIsHandicapRace] = useState(false); 
+
   const [parameters, setParameters] = useState({
     avr_number_of_runs: '',
     avr_years_in_competition: '',
@@ -94,10 +95,7 @@ const Horses = () => {
     setTotalFurlongs(calculateTotalFurlongs(miles, furlongs, yards));
   }, [miles, furlongs, yards]);
 
-
-
   const handleCheckboxChange = useCallback((e) => {
-
     setIsHandicapRace(e.target.checked);
   }, []);
 
@@ -107,7 +105,7 @@ const Horses = () => {
 
   const handleMilesChange = useCallback((e) => {
     setMiles(e.target.value);
-  }, [miles]);
+  }, []);
 
   const handleFurlongsChange = useCallback((e) => {
     setFurlongs(e.target.value);
@@ -124,6 +122,13 @@ const Horses = () => {
     setDistanceY('');
   }, []);
 
+  const handleIsHandicupCheckboxChange = () => {
+    setIsHandicapRace(prevState => !prevState);
+  };
+
+  useEffect(() => {
+    console.log('isHandicapRace:', isHandicapRace);
+  }, [isHandicapRace]);
 
   const handleEventSelectChange = useCallback((event) => {
     const selectedEventName = event.target.value;
@@ -161,12 +166,37 @@ const Horses = () => {
     return milesInFurlongs + furlongsFloat + furlongsFromYards;
   };
 
-
-  // Function to open modal
   const openModal = () => setIsModalOpen(true);
 
-  // Function to close modal
   const closeModal = () => setIsModalOpen(false);
+
+  const handPickWinner = async () => {
+    setIsLoading(true); 
+    try {
+      const response = await axios.post(`${baseURL}/analysis/RacePicksSimulation`, {
+        race_type: raceType,
+        race_distance: totalFurlongs,
+        handicap: isHandicapRace,
+        race_class: "1",
+        event_name: selectedMeeting,
+        event_date: selectedDate,
+        event_time: selectedTime
+      });
+  
+      setModalData(response.data); 
+      openModal(); 
+    } catch (error) {
+      console.error("Error fetching race picks:", error);
+    } finally {
+      setIsLoading(false); 
+    }
+  };
+
+  const isButtonDisabled = !raceType || !miles || !furlongs || !yards;
+
+  const dropdownStyles = (value) => ({
+    borderColor: value ? 'initial' : 'red',
+  });
 
   return (
     <>
@@ -184,15 +214,14 @@ const Horses = () => {
                 selectedDate={selectedDate}
                 setSelectedDate={setSelectedDate}
               />
-
             </div>
             <div className="flex-grow xl:w-1/2 flex justify-end">
               <Link
                 href="#"
                 className="inline-flex items-center justify-center rounded-md px-10 py-4 text-center font-medium text-white hover:bg-opacity-90"
-                style={{ backgroundColor: '#2b96f0', whiteSpace: 'nowrap' }} // Prevent wrapping
-                // onClick={handPickWinner}
-                disabled={isLoading || !distanceM || !distanceF || !distanceY || !raceType}
+                style={{ backgroundColor: '#2b96f0', whiteSpace: 'nowrap' }} 
+                onClick={ handPickWinner}
+                disabled={isButtonDisabled}
               >
                 {isLoading ? (
                   <div className="spinner-border animate-spin inline-block w-4 h-4 border-2 rounded-full"></div>
@@ -219,24 +248,30 @@ const Horses = () => {
               handleTimeClick={handleTimeClick}              
               handleMilesChange={handleMilesChange}
               handleFurlongsChange={handleFurlongsChange}
-              handleYardsChange={handleYardsChange}              
+              handleYardsChange={handleYardsChange} 
+              handleIsHandicupCheckboxChange={handleIsHandicupCheckboxChange}             
               miles={miles}
               furlongs={furlongs}
               yards={yards}
               yardOptions={yardOptions}
               totalFurlongs={totalFurlongs}
               runners={runners}
+              dropdownStyles={dropdownStyles}
             />
           </div>
           <SelctionsTable
             runners={runners}
+            raceType={raceType}
+            isHandicapRace={isHandicapRace}  
+            totalFurlongs={totalFurlongs}      
+            
           />
         </div>
       </div>
 
       <ResultModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={closeModal}
         modalData={modalData}
       />
     </>

@@ -2,6 +2,7 @@
 import React from 'react';
 import { useMemo } from 'react';
 import HandicupButton from './HandicupButton';
+import { useState, useEffect } from 'react';
 
 export default function TimeSelection({
   selectedTime,
@@ -9,6 +10,7 @@ export default function TimeSelection({
   handleTimeClick,
   handleRaceTypeChange,
   raceType,
+  handleIsHandicupCheckboxChange,
   miles,
   handleMilesChange,
   furlongs,
@@ -32,14 +34,6 @@ export default function TimeSelection({
     return options;
   }, []);
 
-
-  const handleCheckboxChange = (runnerName) => {
-    if (selectedRunners.includes(runnerName)) {
-      setSelectedRunners(selectedRunners.filter(name => name !== runnerName));
-    } else {
-      setSelectedRunners([...selectedRunners, runnerName]);
-    }
-  };
   return (
 
     <>
@@ -51,7 +45,7 @@ export default function TimeSelection({
           <span className="text-blue-500">({runners?.selections?.length || 0})</span>
         </div>
         <div className="flex items-center space-x-2">
-          <HandicupButton onChange={handleCheckboxChange} value={isHandicapRace} />
+          <HandicupButton onChange={handleIsHandicupCheckboxChange} value={isHandicapRace} />
           <span>Handicup?</span>
         </div>
       </div>
@@ -106,7 +100,7 @@ export default function TimeSelection({
                 onChange={handleFurlongsChange}
                 value={furlongs}
               >
-                <option value="0">FURLONGS</option>
+                <option value="">FURLONGS</option>
                 <option value="0">0</option>
                 <option value="1">1</option>
                 <option value="2">2</option>
