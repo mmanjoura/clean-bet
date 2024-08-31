@@ -15,9 +15,11 @@ export default function TimeSelection({
   handleMilesChange,
   furlongs,
   yards,
+  raceClass,
   handleFurlongsChange,
   isHandicapRace,
   handleYardsChange,
+  handleRaceClassChange,
   totalFurlongs,
   runners }) {
 
@@ -40,7 +42,7 @@ export default function TimeSelection({
       <div className="flex-grow xl:w-1/2 w-full flex items-center space-x-5">
         <div className="flex items-center space-x-5">
           <span className="mr-1">Distance</span>
-          <span className="text-blue-500">({totalFurlongs.toFixed(2)})</span>
+          <span className="text-blue-500">({totalFurlongs})</span>
           <span className="mr-1">Runners</span>
           <span className="text-blue-500">({runners?.selections?.length || 0})</span>
         </div>
@@ -78,6 +80,13 @@ export default function TimeSelection({
                 <option value="">RACE TYPE</option>
                 <option value="FLAT">FLAT</option>
                 <option value="HURDLE">HURDLE</option>
+                <option value="CHASE">CHASE</option>
+                <option value="ATIONAL HUN">ATIONAL HUNT</option>
+                <option value="MAIDEN">MAIDEN</option>
+                <option value="SELLING">SELLING</option>
+                <option value="CLAIMING">CLAIMING</option>
+                <option value="NOVICE">NOVICE</option>
+                
               </select>
             </td>
             <td className="px-2 py-1">
@@ -122,6 +131,22 @@ export default function TimeSelection({
               >
                 <option value="">YARDS</option>
                 {yardOptions}
+              </select>
+            </td>
+            <td className="px-2 py-1">
+              <select
+                className="w-[90px] rounded border-[1.5px] border-stroke bg-transparent px-1 py-3 text-black outline-none transition focus:border-primary active:border-primary dark:border-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                onChange={handleRaceClassChange}
+                value={raceClass}
+              >
+                <option value="">Class</option>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
               </select>
             </td>
           </tr>

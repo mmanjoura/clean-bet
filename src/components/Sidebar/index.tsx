@@ -65,7 +65,7 @@ const menuGroups = [
         ),
         label: "Dashboard",
         route: "#",
-        children: [{ label: "eCommerce", route: "/" }],
+        children: [{ label: "Data Import", route: "/racing/dashboard" }],
       },
       {
         icon: (

@@ -18,8 +18,9 @@ const Horses = () => {
   const [raceType, setRaceType] = useState('');
   const [miles, setMiles] = useState('');
   const [furlongs, setFurlongs] = useState('');
+  const [raceClass, setRaceClass] = useState('');
   const [yards, setYards] = useState('YARDS');
-  const [totalFurlongs, setTotalFurlongs] = useState(0);
+  const [totalFurlongs, setTotalFurlongs] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalData, setModalData] = useState(null);
@@ -88,7 +89,7 @@ const Horses = () => {
 
       fetchRunners();
     }
-    console.log('totalFurlongs:', totalFurlongs);
+
   }, [selectedMeeting, selectedTime, selectedDate]);
 
   useEffect(() => {
@@ -113,6 +114,9 @@ const Horses = () => {
 
   const handleYardsChange = useCallback((e) => {
     setYards(e.target.value);
+  }, []);
+  const handleRaceClassChange = useCallback((e) => {
+    setRaceClass(e.target.value);
   }, []);
 
   const handleTimeClick = useCallback((time) => {
@@ -163,7 +167,10 @@ const Horses = () => {
     const furlongsFromYards = yardsFloat / 220;
     parameters.current_distance = milesInFurlongs + furlongsFloat + furlongsFromYards;
 
-    return milesInFurlongs + furlongsFloat + furlongsFromYards;
+    let result = milesInFurlongs + furlongsFloat + furlongsFromYards;
+    result = result.toFixed(0);
+
+    return  result.toString();
   };
 
   const openModal = () => setIsModalOpen(true);
@@ -172,15 +179,17 @@ const Horses = () => {
 
   const handPickWinner = async () => {
     setIsLoading(true); 
+
     try {
       const response = await axios.post(`${baseURL}/analysis/RacePicksSimulation`, {
         race_type: raceType,
         race_distance: totalFurlongs,
         handicap: isHandicapRace,
-        race_class: "1",
+        race_class: raceClass,
         event_name: selectedMeeting,
         event_date: selectedDate,
-        event_time: selectedTime
+        event_time: selectedTime,
+        going: "Good",
       });
   
       setModalData(response.data); 
@@ -197,6 +206,8 @@ const Horses = () => {
   const dropdownStyles = (value) => ({
     borderColor: value ? 'initial' : 'red',
   });
+
+  console.log('raceClass:', raceClass);
 
   return (
     <>
@@ -253,6 +264,8 @@ const Horses = () => {
               miles={miles}
               furlongs={furlongs}
               yards={yards}
+              raceClass = {raceClass}
+              handleRaceClassChange={handleRaceClassChange} 
               yardOptions={yardOptions}
               totalFurlongs={totalFurlongs}
               runners={runners}
