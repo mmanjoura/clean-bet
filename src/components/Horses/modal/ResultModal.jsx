@@ -1,6 +1,10 @@
 const ResultModal = ({ isOpen, onClose, modalData }) => {
   if (!isOpen) return null;
 
+  function fractionalOddsToDecimal(odds) {
+    const [numerator, denominator] = odds.split("/").map(Number);
+    return numerator / denominator; // Convert to a decimal value
+  }
 
 
   const hasData = modalData && modalData?.simulationResults?.length > 0;
@@ -34,7 +38,7 @@ const ResultModal = ({ isOpen, onClose, modalData }) => {
                 </tr>
 
                 <tr>
-    
+
                   <th className="py-2 px-4 border-b text-left">
                     <p className="text-meta-5">Time</p>
                   </th>
@@ -66,19 +70,35 @@ const ResultModal = ({ isOpen, onClose, modalData }) => {
                     const scoreComparison = b.total_score - a.total_score;
                     if (scoreComparison !== 0) return scoreComparison;
 
-                    // If total_score is the same, sort by avg_position in ascending order
+                    // If total_score is the same, sort by age in ascending order
+                    const ageA = parseInt(a.age, 10); // Assuming age is a string like "10 years"
+                    const ageB = parseInt(b.age, 10);
+                    const ageComparison = ageA - ageB;
+                    if (ageComparison !== 0) return ageComparison;
+
+                    // Convert fractional odds to decimal values for sorting
+                    const oddsA = fractionalOddsToDecimal(a.odds);
+                    const oddsB = fractionalOddsToDecimal(b.odds);
+
+                    // If age is also the same, sort by odds in ascending order
+                    const oddsComparison = oddsA - oddsB;
+                    if (oddsComparison !== 0) return oddsComparison;
+
+                    // If odds are the same, sort by avg_position in ascending order
                     const avgPositionComparison = a.avg_position - b.avg_position;
                     if (avgPositionComparison !== 0) return avgPositionComparison;
 
                     // If avg_position is also the same, sort by avg_rating in descending order
                     const avgRatingComparison = b.avg_rating - a.avg_rating;
                     return avgRatingComparison;
-                  }).slice(0, 3)
+                  })
+                  .slice(0, 3)
                   .map((item, index) => (
-
                     <tr key={index} className="hover:bg-gray-200 transition-colors duration-300">
                       <td className="py-2 px-4 border-b">{item?.event_time}</td>
-                      <td className="py-2 px-4 border-b">{item?.selection_name.split(" ")[0]} {item?.selection_name.split(" ")[0].slice(0, 1)} {item?.age.split(" ")[0]}&nbsp; {item?.run_count}</td>
+                      <td className="py-2 px-4 border-b">
+                        {item?.selection_name?.split(" ")[0]} {item?.selection_name?.split(" ")[1]?.slice(0, 1)} {item?.age?.split(" ")[0]}&nbsp; {item?.run_count}
+                      </td>
                       <td className="py-2 px-4 border-b">{item?.odds}</td>
                       <td className="py-2 px-4 border-b">{item?.trainer}</td>
                       <td className="py-2 px-4 border-b">{item?.total_score}</td>
@@ -86,8 +106,9 @@ const ResultModal = ({ isOpen, onClose, modalData }) => {
                       <td className="py-2 px-4 border-b">{item?.avg_rating}</td>
                     </tr>
                   ))}
-
               </tbody>
+
+
             </table>
             <button
               onClick={onClose}

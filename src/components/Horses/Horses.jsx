@@ -12,9 +12,9 @@ const Horses = () => {
   const baseURL = process.env.NEXT_PUBLIC_API_URL;
 
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
-  const [distanceM, setDistanceM] = useState('');
-  const [distanceF, setDistanceF] = useState('');
-  const [distanceY, setDistanceY] = useState('');
+  // const [distanceM, setDistanceM] = useState('');
+  // const [distanceF, setDistanceF] = useState('');
+  // const [distanceY, setDistanceY] = useState('');
   const [raceType, setRaceType] = useState('');
   const [miles, setMiles] = useState('');
   const [furlongs, setFurlongs] = useState('');
@@ -24,7 +24,10 @@ const Horses = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalData, setModalData] = useState(null);
-  const [isHandicapRace, setIsHandicapRace] = useState(false); 
+  const [isHandicapRace, setIsHandicapRace] = useState(false);
+  const [positions, setPositions] = useState("2, 3, 4, 5");
+  const [years, setYears] = useState("2024, 2023, 2022");
+  const [ages, setAges] = useState("2, 3, 4, 5");
 
   const [parameters, setParameters] = useState({
     avr_number_of_runs: '',
@@ -170,7 +173,7 @@ const Horses = () => {
     let result = milesInFurlongs + furlongsFloat + furlongsFromYards;
     result = result.toFixed(0);
 
-    return  result.toString();
+    return result.toString();
   };
 
   const openModal = () => setIsModalOpen(true);
@@ -178,7 +181,7 @@ const Horses = () => {
   const closeModal = () => setIsModalOpen(false);
 
   const handPickWinner = async () => {
-    setIsLoading(true); 
+    setIsLoading(true);
 
     try {
       const response = await axios.post(`${baseURL}/analysis/RacePicksSimulation`, {
@@ -189,15 +192,18 @@ const Horses = () => {
         event_name: selectedMeeting,
         event_date: selectedDate,
         event_time: selectedTime,
+        positions: positions,
+        years: years,
+        ages: ages,
         going: "Good",
       });
-  
-      setModalData(response.data); 
-      openModal(); 
+
+      setModalData(response.data);
+      openModal();
     } catch (error) {
       console.error("Error fetching race picks:", error);
     } finally {
-      setIsLoading(false); 
+      setIsLoading(false);
     }
   };
 
@@ -207,7 +213,6 @@ const Horses = () => {
     borderColor: value ? 'initial' : 'red',
   });
 
-  console.log('raceClass:', raceClass);
 
   return (
     <>
@@ -226,12 +231,60 @@ const Horses = () => {
                 setSelectedDate={setSelectedDate}
               />
             </div>
+            <div className="flex-grow xl:w-1/4">
+              <div>
+                <label>
+                  <div className="font-medium text-black dark:text-white ml-2 py-1">
+                    Positions
+                  </div>
+                </label>
+                <input
+                  type="text"
+                  placeholder="2, 4, 5"
+                  value={positions}
+                  onChange={(e) => setPositions(e.target.value)}
+                  className="p-2 border border-gray-300 rounded w-32"
+                />
+              </div>
+            </div>
+            <div className="flex-grow xl:w-1/4">
+              <div>
+                <label>
+                  <div className="font-medium text-black dark:text-white ml-2 py-1">
+                    Years
+                  </div>
+                </label>
+                <input
+                  type="text"
+                  placeholder="2024, 2023, 2022"
+                  value={years}
+                  onChange={(e) => setYears(e.target.value)}
+                  className="p-2 border border-gray-300 rounded w-40"
+                />
+              </div>
+            </div>
+            <div className="flex-grow xl:w-1/4">
+              <div>
+                <label>
+                  <div className="font-medium text-black dark:text-white ml-2 py-1">
+                    Ages
+                  </div>
+                </label>
+                <input
+                  type="text"
+                  placeholder="2, 3, 4, 5"
+                  value={ages}
+                  onChange={(e) => setAges(e.target.value)}
+                  className="p-2 border border-gray-300 rounded w-32"
+                />
+              </div>
+            </div>
             <div className="flex-grow xl:w-1/2 flex justify-end">
               <Link
                 href="#"
                 className="inline-flex items-center justify-center rounded-md px-10 py-4 text-center font-medium text-white hover:bg-opacity-90"
-                style={{ backgroundColor: '#2b96f0', whiteSpace: 'nowrap' }} 
-                onClick={ handPickWinner}
+                style={{ backgroundColor: '#2b96f0', whiteSpace: 'nowrap' }}
+                onClick={handPickWinner}
                 disabled={isButtonDisabled}
               >
                 {isLoading ? (
@@ -252,20 +305,20 @@ const Horses = () => {
           <div className="flex-grow xl:w-1/2">
             <TimeSelection
               isHandicapRace={isHandicapRace}
-              selectedTime={selectedTime}              
+              selectedTime={selectedTime}
               selectedMeetingTime={selectedMeetingTime}
               raceType={raceType}
-              handleRaceTypeChange={handleRaceTypeChange}              
-              handleTimeClick={handleTimeClick}              
+              handleRaceTypeChange={handleRaceTypeChange}
+              handleTimeClick={handleTimeClick}
               handleMilesChange={handleMilesChange}
               handleFurlongsChange={handleFurlongsChange}
-              handleYardsChange={handleYardsChange} 
-              handleIsHandicupCheckboxChange={handleIsHandicupCheckboxChange}             
+              handleYardsChange={handleYardsChange}
+              handleIsHandicupCheckboxChange={handleIsHandicupCheckboxChange}
               miles={miles}
               furlongs={furlongs}
               yards={yards}
-              raceClass = {raceClass}
-              handleRaceClassChange={handleRaceClassChange} 
+              raceClass={raceClass}
+              handleRaceClassChange={handleRaceClassChange}
               yardOptions={yardOptions}
               totalFurlongs={totalFurlongs}
               runners={runners}
@@ -275,9 +328,9 @@ const Horses = () => {
           <SelctionsTable
             runners={runners}
             raceType={raceType}
-            isHandicapRace={isHandicapRace}  
-            totalFurlongs={totalFurlongs}      
-            
+            isHandicapRace={isHandicapRace}
+            totalFurlongs={totalFurlongs}
+
           />
         </div>
       </div>
