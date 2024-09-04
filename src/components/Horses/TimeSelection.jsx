@@ -133,7 +133,7 @@ export default function TimeSelection({
                 {yardOptions}
               </select>
             </td>
-            <td className="px-2 py-1">
+            {/* <td className="px-2 py-1">
               <select
                 className="w-[90px] rounded border-[1.5px] border-stroke bg-transparent px-1 py-3 text-black outline-none transition focus:border-primary active:border-primary dark:border-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                 onChange={handleRaceClassChange}
@@ -148,7 +148,7 @@ export default function TimeSelection({
                 <option value="5">5</option>
                 <option value="6">6</option>
               </select>
-            </td>
+            </td> */}
           </tr>
         </tbody>
       </table>

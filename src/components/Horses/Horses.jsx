@@ -25,9 +25,9 @@ const Horses = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalData, setModalData] = useState(null);
   const [isHandicapRace, setIsHandicapRace] = useState(false);
-  const [positions, setPositions] = useState("2, 3, 4, 5");
-  const [years, setYears] = useState("2024, 2023, 2022");
-  const [ages, setAges] = useState("2, 3, 4, 5");
+  const [positions, setPositions] = useState("6, 7, 8, 9, 10, 11, 12, 13, 14");
+  const [years, setYears] = useState("2021, 2020, 2019, 2018, 2017, 2016");
+  const [ages, setAges] = useState("7, 8, 9, 10, 11, 12, 13, 14");
 
   const [parameters, setParameters] = useState({
     avr_number_of_runs: '',
@@ -235,12 +235,12 @@ const Horses = () => {
               <div>
                 <label>
                   <div className="font-medium text-black dark:text-white ml-2 py-1">
-                    Positions
+                    NOT Positions
                   </div>
                 </label>
                 <input
                   type="text"
-                  placeholder="2, 4, 5"
+                  placeholder="6, 7, 8, 9, 10, 11, 12, 13, 14"
                   value={positions}
                   onChange={(e) => setPositions(e.target.value)}
                   className="p-2 border border-gray-300 rounded w-32"
@@ -251,12 +251,12 @@ const Horses = () => {
               <div>
                 <label>
                   <div className="font-medium text-black dark:text-white ml-2 py-1">
-                    Years
+                    NOT Years
                   </div>
                 </label>
                 <input
                   type="text"
-                  placeholder="2024, 2023, 2022"
+                  placeholder="2021, 2020, 2019, 2019, 2018, 2017"
                   value={years}
                   onChange={(e) => setYears(e.target.value)}
                   className="p-2 border border-gray-300 rounded w-40"
@@ -267,12 +267,12 @@ const Horses = () => {
               <div>
                 <label>
                   <div className="font-medium text-black dark:text-white ml-2 py-1">
-                    Ages
+                    NOT Ages
                   </div>
                 </label>
                 <input
                   type="text"
-                  placeholder="2, 3, 4, 5"
+                  placeholder="7, 8, 9, 10, 11, 12, 13, 14"
                   value={ages}
                   onChange={(e) => setAges(e.target.value)}
                   className="p-2 border border-gray-300 rounded w-32"
@@ -290,7 +290,7 @@ const Horses = () => {
                 {isLoading ? (
                   <div className="spinner-border animate-spin inline-block w-4 h-4 border-2 rounded-full"></div>
                 ) : (
-                  "Get Clean Bet"
+                  "Submit"
                 )}
               </Link>
             </div>
