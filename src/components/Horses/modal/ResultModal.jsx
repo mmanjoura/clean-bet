@@ -1,16 +1,21 @@
+import { useState } from "react";
+
 const ResultModal = ({ isOpen, onClose, modalData }) => {
   // Ensure the modal is displayed only when it's open
   if (!isOpen) return null;
 
   // Helper function to convert fractional odds to decimal
-  function fractionalOddsToDecimal(odds) {
-    if (odds === "SP") return 1; // Handle "SP" odds separately, assuming a value of 1 for sorting
-    const [numerator, denominator] = odds.split("/").map(Number);
-    return numerator / denominator; // Convert to a decimal value
-  }
+  // function fractionalOddsToDecimal(odds) {
+  //   if (odds === "SP") return 1; // Handle "SP" odds separately, assuming a value of 1 for sorting
+  //   const [numerator, denominator] = odds.split("/").map(Number);
+  //   return numerator / denominator; // Convert to a decimal value
+  // }
 
   // Check if there is data in modalData
   const hasData = modalData && Object.keys(modalData).length > 0;
+
+  const [eventName, setEventName] = useState('')
+
 
   // Flatten the data structure for easier processing
   const flattenedData = {};
@@ -22,10 +27,11 @@ const ResultModal = ({ isOpen, onClose, modalData }) => {
         flattenedData[eventName] = [];
       }
       flattenedData[eventName] = flattenedData[eventName].concat(selections);
+
     });
   });
 
-  console.log("Flattened Data:", flattenedData);
+  console.log("Data:", modalData);
 
   return (
     <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center mt-60">
@@ -44,6 +50,8 @@ const ResultModal = ({ isOpen, onClose, modalData }) => {
           <>
             {/* Iterate over each event in flattenedData */}
             {Object.entries(flattenedData).map(([eventName, selections]) => (
+
+          
               <div key={eventName}>
                 {/* Display event name */}
                 <h2 className="text-meta-1">{eventName}</h2>
@@ -71,12 +79,14 @@ const ResultModal = ({ isOpen, onClose, modalData }) => {
                         return timeA[1] - timeB[1];
                       })
                       .map((item, index) => (
+                        <>
                         <tr key={index} className="hover:bg-gray-200 transition-colors duration-300">
                           <td className="py-2 px-4 border-b text-meta-5">{item?.event_time}</td>
                           <td className="py-2 px-4 border-b text-meta-5" >
-                            {item?.selection_name?.split(" ")[0]}{" "}
+                            {/* {item?.selection_name?.split(" ")[0]}{" "}
                             {item?.selection_name?.split(" ")[1]?.slice(0, 3)}{" "}
-                            {item?.age?.split(" ")[0]} {item?.run_count}
+                            {item?.age?.split(" ")[0]} {item?.run_count} */}
+                            {item?.selection_name + " " + item?.age?.split(" ")[0]}
                           </td>
                           <td className="py-2 px-4 border-b text-meta-5">{item?.odds}</td>
                           <td className="py-2 px-4 border-b text-meta-5">{item?.trainer}</td>
@@ -84,6 +94,7 @@ const ResultModal = ({ isOpen, onClose, modalData }) => {
                           <td className="py-2 px-4 border-b text-meta-5">{item?.avg_position}</td>
                           <td className="py-2 px-4 border-b text-meta-5">{item?.avg_rating}</td>
                         </tr>
+                        </>
                       ))}
 
                   </tbody>

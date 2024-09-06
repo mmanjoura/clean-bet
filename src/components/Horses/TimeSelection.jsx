@@ -36,20 +36,22 @@ export default function TimeSelection({
     return options;
   }, []);
 
+  console.log('runners ...', runners);
+
   return (
 
     <>
       <div className="flex-grow xl:w-1/2 w-full flex items-center space-x-5">
         <div className="flex items-center space-x-5">
-          <span className="mr-1">Distance</span>
-          <span className="text-blue-500">({totalFurlongs})</span>
-          <span className="mr-1">Runners</span>
-          <span className="text-blue-500">({runners?.selections?.length || 0})</span>
+          {/* <span className="mr-1">Distance</span> */}
+          <span className="text-blue-500">({runners?.race_condition?.race_distance})</span>
+          {/* <span className="mr-1">Runners</span> */}
+          <span className="text-blue-500">({runners?.race_condition?.number_of_runners})</span>
         </div>
-        <div className="flex items-center space-x-2">
+        {/* <div className="flex items-center space-x-2">
           <HandicupButton onChange={handleIsHandicupCheckboxChange} value={isHandicapRace} />
           <span>Handicup?</span>
-        </div>
+        </div> */}
       </div>
 
       <table className="flex flex-col">

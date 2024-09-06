@@ -20,6 +20,9 @@ const SelectionsTable = ({ runners, raceType, isHandicapRace, totalFurlongs }) =
     );
   };
 
+  if (!runners) return null;
+  console.log("Runners:", runners);
+
 
 
 
