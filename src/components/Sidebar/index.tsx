@@ -27,6 +27,7 @@ const menuGroups = [
           { label: "UK & Ireland", route: "/racing/meetings" },
           { label: "France", route: "/racing/stats" },
           { label: "Strike Rate", route: "/racing/stats" },
+          { label: "Predictions", route: "/racing/result" },
         ],
       },
       {

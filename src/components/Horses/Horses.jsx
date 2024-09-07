@@ -12,9 +12,7 @@ const Horses = () => {
   const baseURL = process.env.NEXT_PUBLIC_API_URL;
 
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
-  // const [distanceM, setDistanceM] = useState('');
-  // const [distanceF, setDistanceF] = useState('');
-  // const [distanceY, setDistanceY] = useState('');
+
   const [raceType, setRaceType] = useState('');
   const [miles, setMiles] = useState('');
   const [furlongs, setFurlongs] = useState('');
@@ -22,12 +20,11 @@ const Horses = () => {
   const [yards, setYards] = useState('YARDS');
   const [totalFurlongs, setTotalFurlongs] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalData, setModalData] = useState(null);
+
   const [isHandicapRace, setIsHandicapRace] = useState(false);
   const [positions, setPositions] = useState("");
   const [years, setYears] = useState("");
-  const [ages, setAges] = useState("");
+  const [ages, setAges] = useState("11,12");
 
   const [parameters, setParameters] = useState({
     avr_number_of_runs: '',
@@ -180,11 +177,11 @@ const Horses = () => {
 
   const closeModal = () => setIsModalOpen(false);
 
-  const handPickWinner = async () => {
+  const handTodayPredictions = async () => {
     setIsLoading(true);
 
     try {
-      const response = await axios.post(`${baseURL}/analysis/RacePicksSimulation`, {
+      const response = await axios.post(`${baseURL}/analysis/TodayPredictions`, {
         race_type: raceType,
         race_distance: totalFurlongs,
         handicap: isHandicapRace,
@@ -206,6 +203,7 @@ const Horses = () => {
       setIsLoading(false);
     }
   };
+
 
   const isButtonDisabled = !raceType || !miles || !furlongs || !yards;
 
@@ -284,7 +282,7 @@ const Horses = () => {
                 href="#"
                 className="inline-flex items-center justify-center rounded-md px-10 py-4 text-center font-medium text-white hover:bg-opacity-90"
                 style={{ backgroundColor: '#2b96f0', whiteSpace: 'nowrap' }}
-                onClick={handPickWinner}
+                onClick={handTodayPredictions}
                 disabled={isButtonDisabled}
               >
                 {isLoading ? (
@@ -323,8 +321,15 @@ const Horses = () => {
               totalFurlongs={totalFurlongs}
               runners={runners}
               dropdownStyles={dropdownStyles}
+              selectedMeeting={selectedMeeting}
+              selectedDate={selectedDate}
+              positions={positions}
+              years={years}
+              ages={ages}
+
             />
           </div>
+          
           <SelctionsTable
             runners={runners}
             raceType={raceType}
@@ -335,11 +340,11 @@ const Horses = () => {
         </div>
       </div>
 
-      <ResultModal
+      {/* <ResultModal
         isOpen={isModalOpen}
         onClose={closeModal}
         modalData={modalData}
-      />
+      /> */}
     </>
   );
 };

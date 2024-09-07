@@ -4,12 +4,7 @@ const ResultModal = ({ isOpen, onClose, modalData }) => {
   // Ensure the modal is displayed only when it's open
   if (!isOpen) return null;
 
-  // Helper function to convert fractional odds to decimal
-  // function fractionalOddsToDecimal(odds) {
-  //   if (odds === "SP") return 1; // Handle "SP" odds separately, assuming a value of 1 for sorting
-  //   const [numerator, denominator] = odds.split("/").map(Number);
-  //   return numerator / denominator; // Convert to a decimal value
-  // }
+
 
   // Check if there is data in modalData
   const hasData = modalData && Object.keys(modalData).length > 0;

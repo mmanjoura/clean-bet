@@ -1,28 +1,54 @@
-// TimeSelection.jsx
-import React from 'react';
-import { useMemo } from 'react';
-import HandicupButton from './HandicupButton';
-import { useState, useEffect } from 'react';
+import React, { useMemo, useState } from 'react';
+import ResultModal from "@/components/Horses/modal/ResultModal";
+import axios from 'axios';
 
 export default function TimeSelection({
   selectedTime,
   selectedMeetingTime,
   handleTimeClick,
-  handleRaceTypeChange,
   raceType,
-  handleIsHandicupCheckboxChange,
-  miles,
-  handleMilesChange,
-  furlongs,
-  yards,
-  raceClass,
-  handleFurlongsChange,
   isHandicapRace,
-  handleYardsChange,
-  handleRaceClassChange,
+  raceClass,
   totalFurlongs,
-  runners }) {
+  runners,
+  selectedMeeting,
+  selectedDate,
+  positions,
+  years,
+  ages,
+}) {
+  const [isLoading, setIsLoading] = useState(false);
+  const [modalData, setModalData] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const baseURL = process.env.NEXT_PUBLIC_API_URL;
 
+  const handleMeetingPrediction = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axios.post(`${baseURL}/analysis/MeetingPrediction`, {
+        race_type: raceType,
+        race_distance: totalFurlongs,
+        handicap: isHandicapRace,
+        race_class: raceClass,
+        event_name: selectedMeeting,
+        event_date: selectedDate,
+        event_time: selectedTime,
+        positions: positions,
+        years: years,
+        ages: ages,
+        going: "Good",
+      });
+
+      console.log(response.data);
+      setModalData(response.data); // Set the modal data with the response
+      openModal(); // Open the modal after receiving the response
+
+    } catch (error) {
+      console.error("Error fetching race statistics:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const yardOptions = useMemo(() => {
     const options = [];
@@ -36,124 +62,61 @@ export default function TimeSelection({
     return options;
   }, []);
 
-  console.log('runners ...', runners);
+  const openModal = () => setIsModalOpen(true);
+
+  const closeModal = () => setIsModalOpen(false);
 
   return (
-
     <>
-      <div className="flex-grow xl:w-1/2 w-full flex items-center space-x-5">
+      <div className="flex items-center justify-between space-x-5 mb-4">
         <div className="flex items-center space-x-5">
-          {/* <span className="mr-1">Distance</span> */}
           <span className="text-blue-500">({runners?.race_condition?.race_distance})</span>
-          {/* <span className="mr-1">Runners</span> */}
           <span className="text-blue-500">({runners?.race_condition?.number_of_runners})</span>
         </div>
-        {/* <div className="flex items-center space-x-2">
-          <HandicupButton onChange={handleIsHandicupCheckboxChange} value={isHandicapRace} />
-          <span>Handicup?</span>
-        </div> */}
       </div>
 
-      <table className="flex flex-col">
-        <tbody>
-          <tr className="flex flex-col md:flex-row md:items-center">
-            {[...new Set(selectedMeetingTime.split(','))].map((time, index) => (
-              <td key={index} className="px-2 py-1">
-                <a
-                  href="#"
-                  className={`block px-2 py-1 rounded ${time === selectedTime
-                    ? 'bg-[#2b96f0] text-white'
-                    : 'bg-blue-100 text-[#2b96f0] hover:bg-blue-200'
-                    }`}
-                  onClick={() => handleTimeClick(time)}
+      {/* Container to align the button */}
+      <div className="flex justify-between items-center">
+        <table>
+          <tbody>
+            <tr>
+              {[...new Set(selectedMeetingTime.split(','))].map((time, index) => (
+                <td key={index} className="px-2 py-1">
+                  <a
+                    href="#"
+                    className={`block px-2 py-1 rounded ${time === selectedTime
+                      ? 'bg-[#2b96f0] text-white'
+                      : 'bg-blue-100 text-[#2b96f0] hover:bg-blue-200'
+                      }`}
+                    onClick={() => handleTimeClick(time)}
+                  >
+                    {time}
+                  </a>
+                </td>
+              ))}
+              <td className="px-2 py-1">
+                <button
+                  className="block px-10 py-1 rounded bg-orange-500 text-white hover:bg-green-500"
+                  onClick={handleMeetingPrediction}
                 >
-                  {time}
-                </a>
+                  {isLoading ? (
+                    <div className="spinner-border animate-spin inline-block w-4 h-4 border-2 rounded-full"></div>
+                  ) : (
+                    "Predict"
+                  )}
+                </button>
               </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-            ))}
-
-            <td className="px-2 py-1">
-              <select
-                className="w-[120px] rounded border-[1.5px] border-stroke bg-transparent px-1 py-3 text-black outline-none transition focus:border-primary active:border-primary dark:border-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                onChange={handleRaceTypeChange}
-                value={raceType}
-              >
-                <option value="">RACE TYPE</option>
-                <option value="FLAT">FLAT</option>
-                <option value="HURDLE">HURDLE</option>
-                <option value="CHASE">CHASE</option>
-                <option value="ATIONAL HUN">ATIONAL HUNT</option>
-                <option value="MAIDEN">MAIDEN</option>
-                <option value="SELLING">SELLING</option>
-                <option value="CLAIMING">CLAIMING</option>
-                <option value="NOVICE">NOVICE</option>
-                
-              </select>
-            </td>
-            <td className="px-2 py-1">
-              <select
-                className="w-[90px] rounded border-[1.5px] border-stroke bg-transparent px-1 py-3 text-black outline-none transition focus:border-primary active:border-primary dark:border-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                onChange={handleMilesChange}
-                value={miles}
-              >
-                <option value="">MILES</option>
-                <option value="0">0</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-              </select>
-            </td>
-            <td className="px-2 py-1">
-              <select
-                className="w-[120px] rounded border-[1.5px] border-stroke bg-transparent px-1 py-3 text-black outline-none transition focus:border-primary active:border-primary dark:border-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                onChange={handleFurlongsChange}
-                value={furlongs}
-              >
-                <option value="">FURLONGS</option>
-                <option value="0">0</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-                <option value="9">9</option>
-              </select>
-            </td>
-
-            <td className="px-2 py-1">
-              <select
-                className="w-[90px] rounded border-[1.5px] border-stroke bg-transparent px-2 py-3 text-black outline-none transition focus:border-primary active:border-primary dark:border-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                onChange={handleYardsChange}
-                value={yards}
-              >
-                <option value="">YARDS</option>
-                {yardOptions}
-              </select>
-            </td>
-            {/* <td className="px-2 py-1">
-              <select
-                className="w-[90px] rounded border-[1.5px] border-stroke bg-transparent px-1 py-3 text-black outline-none transition focus:border-primary active:border-primary dark:border-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                onChange={handleRaceClassChange}
-                value={raceClass}
-              >
-                <option value="">Class</option>
-                <option value="0">0</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-              </select>
-            </td> */}
-          </tr>
-        </tbody>
-      </table>
+      {/* Modal Component */}
+      <ResultModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        modalData={modalData}
+      />
     </>
   );
 }
