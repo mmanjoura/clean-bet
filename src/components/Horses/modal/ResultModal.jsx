@@ -46,20 +46,21 @@ const ResultModal = ({ isOpen, onClose, modalData }) => {
             {/* Iterate over each event in flattenedData */}
             {Object.entries(flattenedData).map(([eventName, selections]) => (
 
+         
+
           
               <div key={eventName}>
-                {/* Display event name */}
-                <h2 className="text-meta-1">{eventName}</h2>
+                <h2 className="text-meta-1">{selections[0].event_name}</h2>
                 <table className="min-w-full bg-white mb-8">
                   <thead className="bg-gray-200">
                     <tr>
                       <th className="py-2 px-4 border-b text-left text-meta-3">Time</th>
                       <th className="py-2 px-4 border-b text-left text-meta-3">Name</th>
                       <th className="py-2 px-4 border-b text-left text-meta-3">Odds</th>
-                      <th className="py-2 px-4 border-b text-left text-meta-3">Trainer</th>
-                      <th className="py-2 px-4 border-b text-left text-meta-3">Score</th>
+                      <th className="py-2 px-4 border-b text-left text-meta-3">Trainer</th>                      
                       <th className="py-2 px-4 border-b text-left text-meta-3">AVG Position</th>
-                      <th className="py-2 px-4 border-b text-left text-meta-3">A Rating</th>
+                      <th className="py-2 px-4 border-b text-left text-meta-3">AVG Rating</th>
+                      <th className="py-2 px-4 border-b text-left text-meta-3">Total Score</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -84,10 +85,10 @@ const ResultModal = ({ isOpen, onClose, modalData }) => {
                             {item?.selection_name + " " + item?.age?.split(" ")[0]}
                           </td>
                           <td className="py-2 px-4 border-b text-meta-5">{item?.odds}</td>
-                          <td className="py-2 px-4 border-b text-meta-5">{item?.trainer}</td>
-                          <td className="py-2 px-4 border-b text-meta-5">{item?.total_score}</td>
+                          <td className="py-2 px-4 border-b text-meta-5">{item?.trainer}</td>                          
                           <td className="py-2 px-4 border-b text-meta-5">{item?.avg_position}</td>
                           <td className="py-2 px-4 border-b text-meta-5">{item?.avg_rating}</td>
+                          <td className="py-2 px-4 border-b text-meta-5">{item?.total_score}</td>
                         </tr>
                         </>
                       ))}

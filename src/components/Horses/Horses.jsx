@@ -277,10 +277,10 @@ const Horses = () => {
                 />
               </div>
             </div>
-            <div className="flex-grow xl:w-1/2 flex justify-end">
+            <div className="flex-grow xl:w-1/2 flex justify-end mt-7">
               <Link
                 href="#"
-                className="inline-flex items-center justify-center rounded-md px-10 py-4 text-center font-medium text-white hover:bg-opacity-90"
+                className="inline-flex items-center justify-center rounded-md px-10 py-2 text-center font-medium text-white hover:bg-opacity-90"
                 style={{ backgroundColor: '#2b96f0', whiteSpace: 'nowrap' }}
                 onClick={handTodayPredictions}
                 disabled={isButtonDisabled}
@@ -288,7 +288,7 @@ const Horses = () => {
                 {isLoading ? (
                   <div className="spinner-border animate-spin inline-block w-4 h-4 border-2 rounded-full"></div>
                 ) : (
-                  "Submit"
+                  "Today's Predictions"
                 )}
               </Link>
             </div>
