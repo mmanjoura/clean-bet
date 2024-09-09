@@ -6,7 +6,6 @@ import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import Predictions from "@/components/Horses/Predictions/Predictions";
 import { useEffect, useState } from "react";
 import MeetingsDate from "@/components/Horses/MeetingsDate";
-
 import axios from "axios";
 
 const page = () => {
@@ -19,10 +18,12 @@ const page = () => {
 
         const fetchPredictions = async () => {
           try {
-            const response = await axios.get(`${baseURL}/preparation/GetWinners?event_date=` + selectedDate, {
+            const response = await axios.get(`${baseURL}/preparation/GetPredictions?event_date=` + selectedDate, {
+
+             
 
             });
-            setpPedictions(response?.data?.predictions || []);
+            setpPedictions(response || []);
             console.log('response ...', response);
 
           } catch (error) {

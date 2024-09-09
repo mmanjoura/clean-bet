@@ -15,6 +15,8 @@ const PredictionsTable = ({ eventName, predictions }) => {
   // State for sorting
   const [sortConfig, setSortConfig] = useState({ key: 'event_time', direction: 'ascending' });
 
+  console.log("PredictionsTable -> predictions", predictions)
+
   // Function to handle sorting when a column header is clicked
   const handleSort = (key) => {
     if (sortConfig.key === key) {
