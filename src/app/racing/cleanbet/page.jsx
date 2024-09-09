@@ -6,38 +6,56 @@ import MeetingsDate from "@/components/Horses/MeetingsDate";
 import axios from "axios";
 
 const CleanBet = () => {
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0]);
   const [predictions, setPredictions] = useState([]);
 
   const baseURL = process.env.NEXT_PUBLIC_API_URL;
 
+  const ukRacecourses = [
+    "Cheltenham", "Aintree", "Goodwood", "Newmarket", "Royal Ascot", "Ascot", "Epsom Downs", "Epsom",
+    "Doncaster", "Newbury", "Lingfield", "Wolverhampton", "Kempton", "Haydock Park", "Haydock", "Ascot",
+    "Chester", "York", "Windsor", "Bath", "Brighton", "Southwell", "Ffos Las", "Catterick", "Stratford",
+    "Wetherby", "Fontwell", "Hereford", "Ripon", "Warwick", "Cartmel", "Plumpton", "Hamilton Park",
+    "Hamilton", "Lingfield Park", "Lingfield", "Nottingham", "Bangor-on-Dee", "Bangor", "Newton Abbot",
+    "Towcester", "Fontwell Park", "Fontwell", "Musselburgh", "Kelso", "Sedgefield", "Market Rasen",
+    "Pontefract", "Hexham", "Thirsk", "Beverley", "Leicester", "Uttoxeter", "Newcastle", "Folkestone", "Yarmouth"
+  ];
+
   useEffect(() => {
     const fetchPredictions = async () => {
       try {
-        const response = await axios.get(`${baseURL}/preparation/GetPredictions?event_date=` + selectedDate);
-        setPredictions(response?.data?.predictions || []);
-        console.log('response ...', response);
+        const response = await axios.get(`${baseURL}/preparation/GetPredictions?event_date=${selectedDate}`);
+        const predictionsData = response?.data?.predictions;
+        if (Array.isArray(predictionsData)) {
+          setPredictions(predictionsData);
+        } else {
+          console.error("Predictions data is not an array:", predictionsData);
+          setPredictions([]);
+        }
+        console.log("response ...", response);
       } catch (error) {
         console.error("Error fetching predictions:", error);
+        setPredictions([]);
       }
     };
 
     fetchPredictions();
   }, [selectedDate, baseURL]);
 
-  // Group selections by event name
-  const groupSelectionsByEvent = predictions.reduce((group, selection) => {
-    const { event_name } = selection; // Corrected field name from eventName to event_name
-    if (!group[event_name]) {
-      group[event_name] = [];
-    }
-    group[event_name].push(selection);
-    return group;
-  }, {});
+  const groupSelectionsByEvent = Array.isArray(predictions)
+    ? predictions.reduce((group, selection) => {
+        const { event_name } = selection;
+        if (!group[event_name]) {
+          group[event_name] = [];
+        }
+        group[event_name].push(selection);
+        return group;
+      }, {})
+    : {};
 
-  console.log('predictions ...', predictions);
-  console.log('selectedDate...', selectedDate);
-  console.log('groupSelectionsByEvent ...', groupSelectionsByEvent);
+  const filteredSelectionsByEvent = Object.entries(groupSelectionsByEvent).filter(([eventName]) =>
+    ukRacecourses.includes(eventName)
+  );
 
   return (
     <DefaultLayout>
@@ -45,23 +63,43 @@ const CleanBet = () => {
       <div className="flex-grow xl:w-1/2 mb-6">
         <MeetingsDate selectedDate={selectedDate} setSelectedDate={setSelectedDate} />
       </div>
-      {Object.entries(groupSelectionsByEvent).map(([eventName, eventSelections]) => (
+      {filteredSelectionsByEvent.map(([eventName, eventSelections]) => (
         <div key={eventName}>
           {/* Event Name Header */}
           <h2 className="text-2xl font-bold mb-4 mt-6">{eventName}</h2>
+
+          {/* Grid layout to ensure three rectangles in one row */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 2xl:gap-7.5">
-            {eventSelections.map((selection, index) => (
+            {/* Group selections by event time */}
+            {Object.entries(
+              eventSelections.reduce((group, selection) => {
+                const { event_time } = selection;
+                if (!group[event_time]) {
+                  group[event_time] = [];
+                }
+                group[event_time].push(selection);
+                return group;
+              }, {})
+            ).map(([eventTime, timeSelections]) => (
               <div
-                key={selection.selection_id} // Use selection_id for unique key
+                key={eventTime}
                 className="rounded-sm border border-stroke bg-white px-5 pb-5 pt-7.5 shadow-default dark:border-strokedark dark:bg-boxdark"
               >
-                {/* Details for each grid item */}
-                <p className="text-sm">{selection.run_count || 'Unknown'} Runners</p>
-                <p className="text-sm font-medium">Selection: {selection.selection_name}</p> {/* Corrected field name from selectionName to selection_name */}
-                <p className="text-sm">Odds: {selection.odds}</p>
-                <p className="text-sm">Clean Bet Score: {selection.total_score}</p> {/* Corrected field name from cleanBetScore to total_score */}
-                <p className="text-sm">Average Position: {selection.avg_position}</p> {/* Corrected field name from avgPosition to avg_position */}
-                <p className="text-sm">Average Rating: {selection.avg_rating}</p> {/* Corrected field name from avgRating to avg_rating */}
+                {/* Time Header */}
+                <div className="flex justify-between mb-4">
+                  <span className="font-bold">Time:</span>
+                  <span className="text-green-500 ml-2 font-bold">{eventTime}</span>
+                </div>
+
+                {/* Render selections with the same time */}
+                {timeSelections.map((selection) => (
+                  <div key={selection.selection_id} className="mb-4">
+                    <div className="flex justify-between mb-2">
+                      <span className="text-green-500 ml-2 font-bold">{selection?.selection_name + " " + selection?.odds }</span>
+                    </div>
+            
+                  </div>
+                ))}
               </div>
             ))}
           </div>
