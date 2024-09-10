@@ -36,12 +36,6 @@ const page = () => {
   
     }, [selectedDate]);
 
-    if (predictions != null) {
-      console.log('predictions ...', predictions);
-      console.log('selectedDate...', selectedDate);
-    }
-
-
     return (
       <DefaultLayout>
         <Breadcrumb pageName="Events Predictions" />

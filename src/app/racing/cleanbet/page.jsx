@@ -26,8 +26,16 @@ const CleanBet = () => {
       try {
         const response = await axios.get(`${baseURL}/preparation/GetPredictions?event_date=${selectedDate}`);
         const predictionsData = response?.data?.predictions;
+
         if (Array.isArray(predictionsData)) {
-          setPredictions(predictionsData);
+          // Sort predictions by event_time in ascending order
+          const sortedPredictions = predictionsData.sort((a, b) => {
+            // Assuming event_time is in HH:mm format or any valid date-time format
+            const timeA = new Date(`${selectedDate}T${a.event_time}`);
+            const timeB = new Date(`${selectedDate}T${b.event_time}`);
+            return timeA - timeB;
+          });
+          setPredictions(sortedPredictions);
         } else {
           console.error("Predictions data is not an array:", predictionsData);
           setPredictions([]);
@@ -59,7 +67,7 @@ const CleanBet = () => {
 
   return (
     <DefaultLayout>
-      <Breadcrumb pageName="Today Clean Bets" />
+      <Breadcrumb pageName="Clean Bets" />
       <div className="flex-grow xl:w-1/2 mb-6">
         <MeetingsDate selectedDate={selectedDate} setSelectedDate={setSelectedDate} />
       </div>
@@ -95,9 +103,8 @@ const CleanBet = () => {
                 {timeSelections.map((selection) => (
                   <div key={selection.selection_id} className="mb-4">
                     <div className="flex justify-between mb-2">
-                      <span className="text-green-500 ml-2 font-bold">{selection?.selection_name + " " + selection?.odds }</span>
+                      <span className="text-green-500 ml-2 font-bold">{selection?.selection_name + " " + selection?.odds}</span>
                     </div>
-            
                   </div>
                 ))}
               </div>
