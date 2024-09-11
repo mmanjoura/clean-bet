@@ -121,9 +121,9 @@ const Horses = () => {
 
   const handleTimeClick = useCallback((time) => {
     setSelectedTime(time);
-    setDistanceM('');
-    setDistanceF('');
-    setDistanceY('');
+    // setDistanceM('');
+    // setDistanceF('');
+    // setDistanceY('');
   }, []);
 
   const handleIsHandicupCheckboxChange = () => {
@@ -192,7 +192,8 @@ const Horses = () => {
         positions: positions,
         years: years,
         ages: ages,
-        going: "Good",
+        going: "Good", // we are using this field to decide to delete and insert or noot
+        bet_amount: "5",
       });
 
       setModalData(response.data);

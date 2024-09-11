@@ -51,7 +51,7 @@ const RunnerDetails = ({
                         }
                             `}
                 >
-                    {runner?.selection_name + " (" + runner?.age.charAt(0) + ")"}
+                    {runner?.selection_name + " (" + runner?.age.split(" ")[0] + ")"}
                     </p>
 
             </div>

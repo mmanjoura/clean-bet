@@ -36,7 +36,8 @@ export default function TimeSelection({
         positions: positions,
         years: years,
         ages: ages,
-        going: "Good",
+        going: "",
+        bet_amount: "5",
       });
 
       console.log(response.data);

@@ -11,16 +11,6 @@ const CleanBet = () => {
 
   const baseURL = process.env.NEXT_PUBLIC_API_URL;
 
-  const ukRacecourses = [
-    "Cheltenham", "Aintree", "Goodwood", "Newmarket", "Royal Ascot", "Ascot", "Epsom Downs", "Epsom",
-    "Doncaster", "Newbury", "Lingfield", "Wolverhampton", "Kempton", "Haydock Park", "Haydock", "Ascot",
-    "Chester", "York", "Windsor", "Bath", "Brighton", "Southwell", "Ffos Las", "Catterick", "Stratford",
-    "Wetherby", "Fontwell", "Hereford", "Ripon", "Warwick", "Cartmel", "Plumpton", "Hamilton Park",
-    "Hamilton", "Lingfield Park", "Lingfield", "Nottingham", "Bangor-on-Dee", "Bangor", "Newton Abbot",
-    "Towcester", "Fontwell Park", "Fontwell", "Musselburgh", "Kelso", "Sedgefield", "Market Rasen",
-    "Pontefract", "Hexham", "Thirsk", "Beverley", "Leicester", "Uttoxeter", "Newcastle", "Folkestone", "Yarmouth"
-  ];
-
   useEffect(() => {
     const fetchPredictions = async () => {
       try {
@@ -28,19 +18,11 @@ const CleanBet = () => {
         const predictionsData = response?.data?.predictions;
 
         if (Array.isArray(predictionsData)) {
-          // Sort predictions by event_time in ascending order
-          const sortedPredictions = predictionsData.sort((a, b) => {
-            // Assuming event_time is in HH:mm format or any valid date-time format
-            const timeA = new Date(`${selectedDate}T${a.event_time}`);
-            const timeB = new Date(`${selectedDate}T${b.event_time}`);
-            return timeA - timeB;
-          });
-          setPredictions(sortedPredictions);
+          setPredictions(predictionsData);
         } else {
           console.error("Predictions data is not an array:", predictionsData);
           setPredictions([]);
         }
-        console.log("response ...", response);
       } catch (error) {
         console.error("Error fetching predictions:", error);
         setPredictions([]);
@@ -50,68 +32,96 @@ const CleanBet = () => {
     fetchPredictions();
   }, [selectedDate, baseURL]);
 
-  const groupSelectionsByEvent = Array.isArray(predictions)
-    ? predictions.reduce((group, selection) => {
-        const { event_name } = selection;
-        if (!group[event_name]) {
-          group[event_name] = [];
-        }
-        group[event_name].push(selection);
-        return group;
-      }, {})
-    : {};
-
-  const filteredSelectionsByEvent = Object.entries(groupSelectionsByEvent).filter(([eventName]) =>
-    ukRacecourses.includes(eventName)
-  );
+  // Group predictions by event name
+  const groupedPredictions = predictions.reduce((acc, prediction) => {
+    if (!acc[prediction.event_name]) {
+      acc[prediction.event_name] = [];
+    }
+    acc[prediction.event_name].push(prediction);
+    return acc;
+  }, {});
 
   return (
     <DefaultLayout>
       <Breadcrumb pageName="Clean Bets" />
-      <div className="flex-grow xl:w-1/2 mb-6">
-        <MeetingsDate selectedDate={selectedDate} setSelectedDate={setSelectedDate} />
+      <div className="flex mb-6">
+        <div className="flex-grow xl:w-1/2 mr-4">
+          <MeetingsDate selectedDate={selectedDate} setSelectedDate={setSelectedDate} />
+        </div>
+        <div className="flex-grow xl:w-1/6">
+          <div className="rounded-sm border border-stroke bg-grey-200 p-4 shadow-default dark:border-strokedark dark:bg-boxdark">
+            <div className="flex justify-between items-center mb-2">
+              <h2 className="text-lg">Starting Pot:</h2>
+              <span className="text-lg flex items-center">
+                <span className="mr-1">€</span>
+              </span>
+            </div>
+            <div className="flex justify-between items-center mb-2">
+              <h2 className="text-lg">Total Bet:</h2>
+              <span className="text-lg flex items-center">
+                <span className="mr-1">€</span>
+              </span>
+            </div>
+
+            <div className="flex justify-between items-center">
+              <h2 className="text-lg">Total Profit & Loss:</h2>
+              <span className={`text-lg flex items-center ${23 > 12 ? 'text-green-500' : 'text-red-500'}`}>
+                <span className="mr-1">€</span>
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
-      {filteredSelectionsByEvent.map(([eventName, eventSelections]) => (
+
+      {/* Render grouped predictions */}
+      {Object.entries(groupedPredictions).map(([eventName, eventPredictions]) => (
         <div key={eventName}>
           {/* Event Name Header */}
           <h2 className="text-2xl font-bold mb-4 mt-6">{eventName}</h2>
 
-          {/* Grid layout to ensure three rectangles in one row */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 2xl:gap-7.5">
-            {/* Group selections by event time */}
-            {Object.entries(
-              eventSelections.reduce((group, selection) => {
-                const { event_time } = selection;
-                if (!group[event_time]) {
-                  group[event_time] = [];
-                }
-                group[event_time].push(selection);
-                return group;
-              }, {})
-            ).map(([eventTime, timeSelections]) => (
+          {/* Grid Container with Three Columns on Large Screens */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {eventPredictions.slice(0, 3).map((prediction, index) => (
               <div
-                key={eventTime}
+                key={index}
                 className="rounded-sm border border-stroke bg-white px-5 pb-5 pt-7.5 shadow-default dark:border-strokedark dark:bg-boxdark"
               >
                 {/* Time Header */}
                 <div className="flex justify-between mb-4">
-                  <span className="font-bold">Time:</span>
-                  <span className="text-green-500 ml-2 font-bold">{eventTime}</span>
+                  <span className="text-meta-1">{prediction?.EventTime}</span>
                 </div>
 
-                {/* Render selections with the same time */}
-                {timeSelections.map((selection) => (
-                  <div key={selection.selection_id} className="mb-4">
-                    <div className="flex justify-between mb-2">
-                      <span className="text-green-500 ml-2 font-bold">{selection?.selection_name + " " + selection?.odds}</span>
-                    </div>
+                {/* Table Header for Selections */}
+                <div className="flex justify-between items-center mb-4 border-b pb-2">
+                  <span className="text-meta-6 w-1/4 text-left">Selection</span>
+                  <span className="text-meta-6 w-1/4 text-left">Score</span>
+                  <span className="text-meta-6 w-1/4 text-left">Odds</span>
+                  <span className="text-meta-6 w-1/4 text-left">Position</span>
+                </div>
+
+                {/* Render selection details */}
+                <div className="mb-4">
+                  <div className="flex justify-between items-center mb-2">
+                    {/* Align each item to match the header alignment */}
+                    <span className="text-blue-500 w-1/4 text-left font-bold">{prediction?.selection_name.slice(0, 7)}</span>
+                    <span className="text-blue-500 w-1/4 text-left font-bold">
+                      {prediction?.clean_bet_score}
+                    </span>
+                    <span className="text-green-500 w-1/4 text-left font-bold text-sm">{prediction?.odds}</span>
+                    <span className="text-green-500 w-1/4 text-left font-bold text-sm">{prediction?.selection_position}</span>
                   </div>
-                ))}
+                </div>
+
+
+                {/* Divider */}
+                <div className="border-t border-stroke"></div>
+                P&L for this event:&nbsp;
               </div>
             ))}
           </div>
         </div>
       ))}
+
     </DefaultLayout>
   );
 };
