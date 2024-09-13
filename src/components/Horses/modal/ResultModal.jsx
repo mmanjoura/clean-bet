@@ -54,13 +54,13 @@ const ResultModal = ({ isOpen, onClose, modalData }) => {
                 <table className="min-w-full bg-white mb-8">
                   <thead className="bg-gray-200">
                     <tr>
-                      <th className="py-2 px-4 border-b text-left text-meta-3">Time</th>
+                      <th className="py-2 px-4 border-b text-left text-meta-3">Pref Distance</th>
                       <th className="py-2 px-4 border-b text-left text-meta-3">Name</th>
                       <th className="py-2 px-4 border-b text-left text-meta-3">Odds</th>
                       <th className="py-2 px-4 border-b text-left text-meta-3">Trainer</th>                      
-                      <th className="py-2 px-4 border-b text-left text-meta-3">AVG Position</th>
-                      <th className="py-2 px-4 border-b text-left text-meta-3">AVG Rating</th>
-                      <th className="py-2 px-4 border-b text-left text-meta-3">Total Score</th>
+                      <th className="py-2 px-4 border-b text-left text-meta-3">Avg Position</th>
+                      <th className="py-2 px-4 border-b text-left text-meta-3">Avg Rating</th>
+                      <th className="py-2 px-4 border-b text-left text-meta-3">Score</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -77,17 +77,17 @@ const ResultModal = ({ isOpen, onClose, modalData }) => {
                       .map((item, index) => (
                         <>
                         <tr key={index} className="hover:bg-gray-200 transition-colors duration-300">
-                          <td className="py-2 px-4 border-b text-meta-5">{item?.event_time}</td>
+                          <td className="py-2 px-4 border-b text-meta-5">{item?.prefered_distance.toFixed(3)}</td>
                           <td className="py-2 px-4 border-b text-meta-5" >
                             {/* {item?.selection_name?.split(" ")[0]}{" "}
                             {item?.selection_name?.split(" ")[1]?.slice(0, 3)}{" "}
                             {item?.age?.split(" ")[0]} {item?.run_count} */}
                             {item?.selection_name + " " + item?.age?.split(" ")[0]}
                           </td>
-                          <td className="py-2 px-4 border-b text-meta-5">{item?.odds}</td>
+                          <td className="py-2 px-4 border-b text-meta-5">{item?.avg_odds.toFixed(2)}</td>
                           <td className="py-2 px-4 border-b text-meta-5">{item?.trainer}</td>                          
-                          <td className="py-2 px-4 border-b text-meta-5">{item?.avg_position}</td>
-                          <td className="py-2 px-4 border-b text-meta-5">{item?.avg_rating}</td>
+                          <td className="py-2 px-4 border-b text-meta-5">{item?.avg_position.toFixed(2)}</td>
+                          <td className="py-2 px-4 border-b text-meta-5">{item?.avg_rating.toFixed(2)}</td>
                           <td className="py-2 px-4 border-b text-meta-5">{item?.total_score}</td>
                         </tr>
                         </>

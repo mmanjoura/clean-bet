@@ -81,14 +81,14 @@ const CleanBet = () => {
 
           {/* Grid Container with Three Columns on Large Screens */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {eventPredictions.slice(0, 3).map((prediction, index) => (
+            {eventPredictions.map((prediction, index) => (
               <div
                 key={index}
                 className="rounded-sm border border-stroke bg-white px-5 pb-5 pt-7.5 shadow-default dark:border-strokedark dark:bg-boxdark"
               >
                 {/* Time Header */}
                 <div className="flex justify-between mb-4">
-                  <span className="text-meta-1">{prediction?.EventTime}</span>
+                  <span className="text-meta-1">{prediction?.event_time}</span>
                 </div>
 
                 {/* Table Header for Selections */}
