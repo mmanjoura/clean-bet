@@ -8,6 +8,8 @@ import axios from "axios";
 const CleanBet = () => {
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0]);
   const [predictions, setPredictions] = useState([]);
+  const [totalBet, setTotalBet] = useState(0);
+  const [totalProfit, setTotalProfit] = useState(0);
 
   const baseURL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -15,7 +17,11 @@ const CleanBet = () => {
     const fetchPredictions = async () => {
       try {
         const response = await axios.get(`${baseURL}/preparation/GetPredictions?event_date=${selectedDate}`);
-        const predictionsData = response?.data?.predictions;
+        const predictionsData = response?.data?.predictions?.selections;
+        const totalBetAmount = response?.data?.predictions?.total_bet;
+        const totalProfitAmount = response?.data?.predictions?.total_return;
+        setTotalBet(totalBetAmount);
+        setTotalProfit(totalProfitAmount);
 
         if (Array.isArray(predictionsData)) {
           setPredictions(predictionsData);
@@ -41,6 +47,11 @@ const CleanBet = () => {
     return acc;
   }, {});
 
+  if (predictions.length) {
+    console.log("Grouped Predictions:", groupedPredictions);
+  }
+
+
   return (
     <DefaultLayout>
       <Breadcrumb pageName="Clean Bets" />
@@ -50,23 +61,18 @@ const CleanBet = () => {
         </div>
         <div className="flex-grow xl:w-1/6">
           <div className="rounded-sm border border-stroke bg-grey-200 p-4 shadow-default dark:border-strokedark dark:bg-boxdark">
-            <div className="flex justify-between items-center mb-2">
-              <h2 className="text-lg">Starting Pot:</h2>
-              <span className="text-lg flex items-center">
-                <span className="mr-1">€</span>
-              </span>
-            </div>
+     
             <div className="flex justify-between items-center mb-2">
               <h2 className="text-lg">Total Bet:</h2>
               <span className="text-lg flex items-center">
-                <span className="mr-1">€</span>
+                <span className="mr-1">€{totalBet}</span>
               </span>
             </div>
 
             <div className="flex justify-between items-center">
               <h2 className="text-lg">Total Profit & Loss:</h2>
               <span className={`text-lg flex items-center ${23 > 12 ? 'text-green-500' : 'text-red-500'}`}>
-                <span className="mr-1">€</span>
+                <span className="mr-1">€{totalProfit.toFixed(2)}</span>
               </span>
             </div>
           </div>
@@ -108,7 +114,7 @@ const CleanBet = () => {
                       {prediction?.clean_bet_score}
                     </span>
                     <span className="text-green-500 w-1/4 text-left font-bold text-sm">{prediction?.odds}</span>
-                    <span className="text-green-500 w-1/4 text-left font-bold text-sm">{prediction?.selection_position}</span>
+                    <span className="text-green-500 w-1/4 text-left font-bold text-sm">{prediction?.position}</span>
                   </div>
                 </div>
 
