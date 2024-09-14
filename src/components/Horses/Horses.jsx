@@ -66,6 +66,34 @@ const Horses = () => {
     fetchMeetings();
   }, [selectedDate, baseURL]);
 
+  const handleMeetingPrediction = async () => {
+    setIsLoading(true);
+    console.log("Predicting for event_time:", selectedTime); // Log the event_time before the API call
+    try {
+      const response = await axios.post(`${baseURL}/analysis/MeetingPrediction`, {
+        race_type: raceType,
+        race_distance: totalFurlongs,
+        handicap: isHandicapRace,
+        race_class: raceClass,
+        event_name: selectedMeeting,
+        event_date: selectedDate,
+        event_time: selectedTime, // Use the selected time state
+        positions: positions,
+        years: years,
+        ages: ages,
+        bet_amount: "5",
+      });
+
+      console.log("Response from API:", response.data);
+      setModalData(response.data); // Set the modal data with the response
+      openModal(); // Open the modal after receiving the response
+    } catch (error) {
+      console.error("Error fetching race statistics:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Get Runners
   useEffect(() => {
     if (selectedMeeting && selectedTime) {
@@ -283,7 +311,7 @@ const Horses = () => {
                 href="#"
                 className="inline-flex items-center justify-center rounded-md px-10 py-2 text-center font-medium text-white hover:bg-opacity-90"
                 style={{ backgroundColor: '#2b96f0', whiteSpace: 'nowrap' }}
-                onClick={handTodayPredictions}
+                onClick={handleMeetingPrediction}
                 disabled={isButtonDisabled}
               >
                 {isLoading ? (

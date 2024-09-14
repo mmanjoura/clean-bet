@@ -111,10 +111,11 @@ export default function TimeSelection({
                   </a>
                 </td>
               ))}
-              <td className="px-2 py-1">
+              {/* <td className="px-2 py-1">
                 <button
                   className="block px-10 py-1 rounded bg-orange-500 text-white hover:bg-green-500"
                   onClick={handleMeetingPrediction}
+              
                 >
                   {isLoading ? (
                     <div className="spinner-border animate-spin inline-block w-4 h-4 border-2 rounded-full"></div>
@@ -122,7 +123,7 @@ export default function TimeSelection({
                     "Predict"
                   )}
                 </button>
-              </td>
+              </td> */}
             </tr>
           </tbody>
         </table>
