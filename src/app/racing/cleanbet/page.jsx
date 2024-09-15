@@ -143,7 +143,7 @@ const CleanBet = () => {
                   {/* Divider */}
                   <div className="border-t border-stroke"></div>
                   {/* if the selection win */}
-                  P&L for this event:&nbsp; { isWin ? `€${prediction?.odds * 10}` : "€0.00" }
+                  P&L for this event:&nbsp; { isWin ? `€${(prediction?.odds * 10).toFixed(2)}` : "€0.00" }
                 </div>
               );
             })}
