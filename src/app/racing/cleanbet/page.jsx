@@ -11,13 +11,19 @@ const CleanBet = () => {
   const [predictions, setPredictions] = useState([]);
   const [totalBet, setTotalBet] = useState(0);
   const [totalProfit, setTotalProfit] = useState(0);
+  const [delta, setDelta] = useState(1);
+  const [avgPosition, setAvgPosition] = useState(2);
+  const [totalRuns, setTotalRuns] = useState(10);
 
   const baseURL = process.env.NEXT_PUBLIC_API_URL;
 
   useEffect(() => {
     const fetchPredictions = async () => {
       try {
-        const response = await axios.get(`${baseURL}/preparation/GetPredictions?event_date=${selectedDate}`);
+        const response = await axios.get(`${baseURL}/preparation/GetPredictions?event_date=${selectedDate}&delta=${delta}&avg_position=${avgPosition}&total_runs=${totalRuns}`);
+
+
+
         const predictionsData = response?.data?.predictions?.selections;
         const totalBetAmount = response?.data?.predictions?.total_bet;
         const totalProfitAmount = response?.data?.predictions?.total_return;
@@ -37,7 +43,7 @@ const CleanBet = () => {
     };
 
     fetchPredictions();
-  }, [selectedDate, baseURL]);
+  }, [selectedDate, baseURL, delta, avgPosition, totalRuns]);
 
   // Group predictions by event name
   const groupedPredictions = predictions.reduce((acc, prediction) => {
@@ -48,26 +54,129 @@ const CleanBet = () => {
     return acc;
   }, {});
 
+  const handleEventDeltaChanged = (event) => {
+    const selectedValue = event.target.value;
+    setDelta(selectedValue);
+
+    // Add any other logic you want to handle when the event changes
+    console.log('Selected num run Analysis:', selectedValue);
+  };
+
+  const handleEventAvgPositionChanged = (event) => {
+    const selectedValue = event.target.value;
+    setAvgPosition(selectedValue);
+
+    // Add any other logic you want to handle when the event changes
+    console.log('Selected num run Analysis:', selectedValue);
+  };
+
+  const handleEventTotalRunsChanged = (event) => {
+    const selectedValue = event.target.value;
+    setTotalRuns(selectedValue);
+
+    // Add any other logic you want to handle when the event changes
+    console.log('Selected num run Analysis:', selectedValue);
+  };
+
+
   return (
     <DefaultLayout>
       <Breadcrumb pageName="Clean Bets" />
       <div className="flex mb-6">
-        <div className="flex-grow xl:w-1/2 mr-4">
+        <div className="flex-grow xl:w-1/2">
           <MeetingsDate selectedDate={selectedDate} setSelectedDate={setSelectedDate} />
+        </div>
+        
+
+        <div className="flex-grow xl:w-1/4">
+          <div>
+            <label>
+              <div className="font-medium text-black dark:text-white ml-2 py-1">
+                Delta PD & CD
+              </div>
+            </label>
+            <select
+              id="delta_analysis"
+              className={`relative z-20 w-1/2 appearance-none rounded border border-stroke bg-transparent px-1 py-3 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input `}
+              onChange={handleEventDeltaChanged}
+              aria-label="Select a meeting"
+            >
+              <option selected value="1">1f</option>
+              <option value="2">2f</option>
+              <option value="3">3f</option>
+              <option value="4">4f</option>
+              <option value="5">5f</option>
+              <option value="6">6f</option>
+              <option value="7">7f</option>
+              <option value="8">8f</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="flex-grow xl:w-1/4">
+          <div>
+            <label>
+              <div className="font-medium text-black dark:text-white ml-2 py-1">
+                Avg positon
+              </div>
+            </label>
+            <select
+              id="position_analysis"
+              className={`relative z-20 w-1/2 appearance-none rounded border border-stroke bg-transparent px-1 py-3 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input `}
+              onChange={handleEventAvgPositionChanged}
+              aria-label="Select a meeting"
+            >
+              <option value="1">1st</option>
+              <option selected value="2">2nd</option>
+              <option value="3">3rd</option>
+              <option value="4">4th</option>
+              <option value="5">5th</option>
+            </select>
+          </div>
+        </div>
+        <div className="flex-grow xl:w-1/4">
+          <div>
+            <label>
+              <div className="font-medium text-black dark:text-white ml-2 py-1">
+                Total Runs
+              </div>
+            </label>
+            <select
+              id="total_run_analysis"
+              className={`relative z-20 w-1/2 appearance-none rounded border border-stroke bg-transparent px-1 py-3 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input `}
+              onChange={handleEventTotalRunsChanged}
+              aria-label="Select a meeting"
+            >
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+              <option selected value="10">10</option>
+              <option value="15">15</option>
+              <option value="20">20</option>
+              <option value="25">25</option>
+              <option value="30">30</option>
+            </select>
+          </div>
         </div>
         <div className="flex-grow xl:w-1/6">
           <div className="rounded-sm border border-stroke bg-grey-200 p-4 shadow-default dark:border-strokedark dark:bg-boxdark">
-     
+
             <div className="flex justify-between items-center mb-2">
-              <h2 className="text-lg">Total Bet:</h2>
+              <h2 className="text-lg">Bet:</h2>
               <span className="text-lg flex items-center">
                 <span className="mr-1">€{totalBet}</span>
               </span>
             </div>
 
             <div className="flex justify-between items-center">
-              <h2 className="text-lg">Total Profit & Loss:</h2>
-              <span className={`text-lg flex items-center ${totalProfit > 0 ? 'text-green-500' : 'text-red-500'}`}>
+              <h2 className="text-lg">P&L:</h2>
+              <span className={`text-lg flex items-center ${(totalProfit - totalBet) > 0 ? 'text-green-500' : 'text-meta-1'}`}>
                 <span className="mr-1">€{totalProfit.toFixed(2)}</span>
               </span>
             </div>
@@ -95,9 +204,8 @@ const CleanBet = () => {
                   {/* Time or Date Header (Red for loss, Green for win) */}
                   <div className="flex justify-between mb-4">
                     <span
-                      className={`flex items-center ${
-                        isWin ? "text-green-500" : "text-meta-1"
-                      }`}
+                      className={`flex items-center ${isWin ? "text-green-500" : "text-meta-1"
+                        }`}
                     >
                       {isWin ? (
                         <>
@@ -134,16 +242,20 @@ const CleanBet = () => {
                       <span className="text-green-500 w-1/4 text-left font-bold text-sm">
                         {prediction?.odds}
                       </span>
-                      <span className="text-green-500 w-1/4 text-left font-bold text-sm">
+                      <span
+                        className={`w-1/4 text-left font-bold text-sm ${prediction?.position.split("/")[0] === "1" ? "text-green-500" : "text-meta-1"
+                          }`}
+                      >
                         {prediction?.position}
                       </span>
+
                     </div>
                   </div>
 
                   {/* Divider */}
                   <div className="border-t border-stroke"></div>
                   {/* if the selection win */}
-                  P&L for this event:&nbsp; { isWin ? `€${(prediction?.odds * 10).toFixed(2)}` : "€0.00" }
+                  P&L for this event:&nbsp; {isWin ? `€${(prediction?.odds * 10).toFixed(2)}` : "€0.00"}
                 </div>
               );
             })}

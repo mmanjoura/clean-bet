@@ -17,7 +17,12 @@ const MeetingsDate = ({ selectedDate, setSelectedDate }) => {
         </label>
         <input
           type="date"
-          className="p-2 border border-gray-300 rounded"
+          className={`
+            relative z-20 w-3/4 appearance-none rounded border 
+            border-stroke bg-transparent px-12 py-3 outline-none 
+            transition focus:border-primary active:border-primary 
+            dark:border-form-strokedark dark:bg-form-input
+          `}
           value={selectedDate}
           onChange={handleDateChange}
           aria-label="Select a date"

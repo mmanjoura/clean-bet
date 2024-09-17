@@ -12,7 +12,7 @@ const Horses = () => {
   const baseURL = process.env.NEXT_PUBLIC_API_URL;
 
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
-
+  const [numRunAnalysis, setNumRunAnalysis] = useState('4');
   const [raceType, setRaceType] = useState('');
   const [miles, setMiles] = useState('');
   const [furlongs, setFurlongs] = useState('');
@@ -82,6 +82,7 @@ const Horses = () => {
         years: years,
         ages: ages,
         bet_amount: "5",
+        num_run_analysis: numRunAnalysis,
       });
 
       console.log("Response from API:", response.data);
@@ -222,6 +223,7 @@ const Horses = () => {
         ages: ages,
         going: "Good", // we are using this field to decide to delete and insert or noot
         bet_amount: "5",
+        num_run_analysis: numRunAnalysis,
       });
 
       setModalData(response.data);
@@ -240,6 +242,15 @@ const Horses = () => {
     borderColor: value ? 'initial' : 'red',
   });
 
+  const handleEventNumRunAnalysisChange = (event) => {
+    const selectedValue = event.target.value;
+    setNumRunAnalysis(selectedValue);
+    
+    // Add any other logic you want to handle when the event changes
+    console.log('Selected num run Analysis:', selectedValue);
+  };
+
+
 
   return (
     <>
@@ -252,58 +263,35 @@ const Horses = () => {
                 handleEventSelectChange={handleEventSelectChange}
               />
             </div>
-            <div className="flex-grow xl:w-1/2">
+            <div className="flex-grow xl:w-3/4">
               <MeetingsDate
                 selectedDate={selectedDate}
                 setSelectedDate={setSelectedDate}
               />
             </div>
-            <div className="flex-grow xl:w-1/4">
+            <div className="flex-grow xl:w-1/2">
               <div>
                 <label>
                   <div className="font-medium text-black dark:text-white ml-2 py-1">
-                    NOT Positions
+                    Analyse Based On
                   </div>
                 </label>
-                <input
-                  type="text"
-                  placeholder="11, 12, 13, 14"
-                  value={positions}
-                  onChange={(e) => setPositions(e.target.value)}
-                  className="p-2 border border-gray-300 rounded w-32"
-                />
-              </div>
-            </div>
-            <div className="flex-grow xl:w-1/4">
-              <div>
-                <label>
-                  <div className="font-medium text-black dark:text-white ml-2 py-1">
-                    NOT Years
-                  </div>
-                </label>
-                <input
-                  type="text"
-                  placeholder="2019, 2018, 2017"
-                  value={years}
-                  onChange={(e) => setYears(e.target.value)}
-                  className="p-2 border border-gray-300 rounded w-40"
-                />
-              </div>
-            </div>
-            <div className="flex-grow xl:w-1/4">
-              <div>
-                <label>
-                  <div className="font-medium text-black dark:text-white ml-2 py-1">
-                    NOT Ages
-                  </div>
-                </label>
-                <input
-                  type="text"
-                  placeholder="11, 12, 13, 14"
-                  value={ages}
-                  onChange={(e) => setAges(e.target.value)}
-                  className="p-2 border border-gray-300 rounded w-32"
-                />
+                <select
+                  id="num_run_analysis"
+                  className={`relative z-20 w-full appearance-none rounded border border-stroke bg-transparent px-1 py-3 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input `}
+                  onChange={handleEventNumRunAnalysisChange}
+                  aria-label="Select a meeting"
+                >
+                  <option value="1">Last Run Only</option>
+                  <option value="2">Last 2 Runs</option>
+                  <option value="3">Last 3 Runs</option>
+                  <option selected value="4">Last 4 Runs</option>
+                  <option value="5">Last 5 Runs</option>
+                  <option value="6">Last 6 Runs</option>
+                  <option value="7">Last 7 Runs</option>
+                  <option value="8">Last 8 Runs</option>
+                  <option value="9">Last 9 Runs</option>
+                </select>
               </div>
             </div>
             <div className="flex-grow xl:w-1/2 flex justify-end mt-7">
@@ -358,7 +346,7 @@ const Horses = () => {
 
             />
           </div>
-          
+
           <SelctionsTable
             runners={runners}
             raceType={raceType}

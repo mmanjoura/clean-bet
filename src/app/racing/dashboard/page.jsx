@@ -55,15 +55,12 @@ const Dashboard = () => {
     <DefaultLayout>
       <Breadcrumb pageName="Import Markets" />
 
-      <div className="mb-10 rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-        <div className="p-4 md:p-6 xl:p-9">
-          <div className="flex items-center gap-5 xl:gap-7.5">
-            <MeetingsDate
-              selectedDate={selectedDate}
-              setSelectedDate={setSelectedDate}
-              className="h-12"
-            />
-          </div>
+      <div  className="mb-10 rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+        <div className="p-4 md:p-6 xl:p-9" >
+
+          <div className="flex-grow xl:w-1/3">
+          <MeetingsDate selectedDate={selectedDate} setSelectedDate={setSelectedDate} />
+        </div>
 
           {/* Control Buttons */}
           <div className="flex items-center justify-end mt-6 gap-4">
