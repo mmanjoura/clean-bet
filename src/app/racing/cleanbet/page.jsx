@@ -1,5 +1,6 @@
 'use client';
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import MeetingsDate from "@/components/Horses/MeetingsDate";
@@ -9,7 +10,7 @@ import { FaCheck, FaTimes } from "react-icons/fa";  // Importing icons for check
 const CleanBet = () => {
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0]);
   const [predictions, setPredictions] = useState([]);
-  const [totalBet, setTotalBet] = useState(0);
+  const [totalBet, setTotalBet] = useState(10);
   const [totalProfit, setTotalProfit] = useState(0);
   const [delta, setDelta] = useState(1);
   const [avgPosition, setAvgPosition] = useState(2);
@@ -78,15 +79,40 @@ const CleanBet = () => {
     console.log('Selected num run Analysis:', selectedValue);
   };
 
+  const handlePredictionWinners = async () => {
+
+
+    try {
+      const response = await axios.post(`${baseURL}/preparation/PredictionWinners`, {
+        event_date: selectedDate,
+        delta: delta,
+        avg_position: avgPosition,
+        total_runs: totalRuns,
+        stake: totalBet,
+
+      });
+
+    } catch (error) {
+      console.error("Error fetching race picks:", error);
+    } 
+  };
+
+
+    console.log("Predictions data:", predictions);
+
+ 
+
 
   return (
     <DefaultLayout>
       <Breadcrumb pageName="Clean Bets" />
+
       <div className="flex mb-6">
+
         <div className="flex-grow xl:w-1/2">
           <MeetingsDate selectedDate={selectedDate} setSelectedDate={setSelectedDate} />
         </div>
-        
+
 
         <div className="flex-grow xl:w-1/4">
           <div>
@@ -164,6 +190,15 @@ const CleanBet = () => {
             </select>
           </div>
         </div>
+        <Link
+          href="#"
+          className="inline-flex items-center justify-center rounded-md border border-primary px-10 py-4 text-center font-medium text-primary hover:bg-opacity-90 lg:px-8 xl:px-10 mr-4" // Added mr-4
+          onClick={handlePredictionWinners}
+          disabled={false}
+        >
+          Get Winners
+        </Link>
+
         <div className="flex-grow xl:w-1/6">
           <div className="rounded-sm border border-stroke bg-grey-200 p-4 shadow-default dark:border-strokedark dark:bg-boxdark">
 
@@ -182,6 +217,7 @@ const CleanBet = () => {
             </div>
           </div>
         </div>
+
       </div>
 
       {/* Render grouped predictions */}
@@ -194,7 +230,9 @@ const CleanBet = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {eventPredictions.map((prediction, index) => {
               // Determine if the selection is a win (e.g., position "1") or loss
-              const isWin = prediction.position[0] === "1";
+               const isWin = prediction.current_event_position[0] === "1";
+
+
 
               return (
                 <div
@@ -240,13 +278,13 @@ const CleanBet = () => {
                         {prediction?.clean_bet_score}
                       </span>
                       <span className="text-green-500 w-1/4 text-left font-bold text-sm">
-                        {prediction?.odds}
+                        {prediction?.current_event_price}
                       </span>
                       <span
-                        className={`w-1/4 text-left font-bold text-sm ${prediction?.position.split("/")[0] === "1" ? "text-green-500" : "text-meta-1"
+                        className={`w-1/4 text-left font-bold text-sm ${prediction?.current_event_position.split("/")[0] === "1" ? "text-green-500" : "text-meta-1"
                           }`}
                       >
-                        {prediction?.position}
+                        {prediction?.current_event_position}
                       </span>
 
                     </div>

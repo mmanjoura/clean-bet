@@ -155,9 +155,9 @@ const Horses = () => {
     // setDistanceY('');
   }, []);
 
-  const handleIsHandicupCheckboxChange = () => {
-    setIsHandicapRace(prevState => !prevState);
-  };
+  // const handleIsHandicupCheckboxChange = () => {
+  //   setIsHandicapRace(prevState => !prevState);
+  // };
 
   useEffect(() => {
     console.log('isHandicapRace:', isHandicapRace);
@@ -206,34 +206,34 @@ const Horses = () => {
 
   const closeModal = () => setIsModalOpen(false);
 
-  const handTodayPredictions = async () => {
-    setIsLoading(true);
+  // const handlePredictionWinners = async () => {
+  //   setIsLoading(true);
 
-    try {
-      const response = await axios.post(`${baseURL}/analysis/TodayPredictions`, {
-        race_type: raceType,
-        race_distance: totalFurlongs,
-        handicap: isHandicapRace,
-        race_class: raceClass,
-        event_name: selectedMeeting,
-        event_date: selectedDate,
-        event_time: selectedTime,
-        positions: positions,
-        years: years,
-        ages: ages,
-        going: "Good", // we are using this field to decide to delete and insert or noot
-        bet_amount: "5",
-        num_run_analysis: numRunAnalysis,
-      });
+  //   try {
+  //     const response = await axios.post(`${baseURL}/analysis/GetPredictionWinners`, {
+  //       race_type: raceType,
+  //       race_distance: totalFurlongs,
+  //       handicap: isHandicapRace,
+  //       race_class: raceClass,
+  //       event_name: selectedMeeting,
+  //       event_date: selectedDate,
+  //       event_time: selectedTime,
+  //       positions: positions,
+  //       years: years,
+  //       ages: ages,
+  //       going: "Good", // we are using this field to decide to delete and insert or noot
+  //       bet_amount: "5",
+  //       num_run_analysis: numRunAnalysis,
+  //     });
 
-      setModalData(response.data);
-      openModal();
-    } catch (error) {
-      console.error("Error fetching race picks:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  //     setModalData(response.data);
+  //     openModal();
+  //   } catch (error) {
+  //     console.error("Error fetching race picks:", error);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
 
   const isButtonDisabled = !raceType || !miles || !furlongs || !yards;
@@ -245,7 +245,7 @@ const Horses = () => {
   const handleEventNumRunAnalysisChange = (event) => {
     const selectedValue = event.target.value;
     setNumRunAnalysis(selectedValue);
-    
+
     // Add any other logic you want to handle when the event changes
     console.log('Selected num run Analysis:', selectedValue);
   };
@@ -297,17 +297,17 @@ const Horses = () => {
             <div className="flex-grow xl:w-1/2 flex justify-end mt-7">
               <Link
                 href="#"
-                className="inline-flex items-center justify-center rounded-md px-10 py-2 text-center font-medium text-white hover:bg-opacity-90"
-                style={{ backgroundColor: '#2b96f0', whiteSpace: 'nowrap' }}
+                className="inline-flex items-center justify-center rounded-md border border-meta-3 px-10 py-4 text-center font-medium text-meta-3 hover:bg-opacity-90 lg:px-8 xl:px-10 mr-4" // Added mr-4
                 onClick={handleMeetingPrediction}
                 disabled={isButtonDisabled}
               >
                 {isLoading ? (
                   <div className="spinner-border animate-spin inline-block w-4 h-4 border-2 rounded-full"></div>
                 ) : (
-                  "Today's Predictions"
+                  "Analysis"
                 )}
-              </Link>
+              </Link>        
+
             </div>
 
           </div>
@@ -328,7 +328,7 @@ const Horses = () => {
               handleMilesChange={handleMilesChange}
               handleFurlongsChange={handleFurlongsChange}
               handleYardsChange={handleYardsChange}
-              handleIsHandicupCheckboxChange={handleIsHandicupCheckboxChange}
+              // handleIsHandicupCheckboxChange={handleIsHandicupCheckboxChange}
               miles={miles}
               furlongs={furlongs}
               yards={yards}

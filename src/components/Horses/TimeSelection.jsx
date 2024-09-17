@@ -7,7 +7,7 @@ export default function TimeSelection({
   selectedMeetingTime,
   handleTimeClick,
   raceType,
-  isHandicapRace,
+  // isHandicapRace,
   raceClass,
   totalFurlongs,
   runners,
