@@ -206,36 +206,6 @@ const Horses = () => {
 
   const closeModal = () => setIsModalOpen(false);
 
-  // const handlePredictionWinners = async () => {
-  //   setIsLoading(true);
-
-  //   try {
-  //     const response = await axios.post(`${baseURL}/analysis/GetPredictionWinners`, {
-  //       race_type: raceType,
-  //       race_distance: totalFurlongs,
-  //       handicap: isHandicapRace,
-  //       race_class: raceClass,
-  //       event_name: selectedMeeting,
-  //       event_date: selectedDate,
-  //       event_time: selectedTime,
-  //       positions: positions,
-  //       years: years,
-  //       ages: ages,
-  //       going: "Good", // we are using this field to decide to delete and insert or noot
-  //       bet_amount: "5",
-  //       num_run_analysis: numRunAnalysis,
-  //     });
-
-  //     setModalData(response.data);
-  //     openModal();
-  //   } catch (error) {
-  //     console.error("Error fetching race picks:", error);
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
-
-
   const isButtonDisabled = !raceType || !miles || !furlongs || !yards;
 
   const dropdownStyles = (value) => ({
@@ -283,9 +253,9 @@ const Horses = () => {
                   aria-label="Select a meeting"
                 >
                   <option value="1">Last Run Only</option>
-                  <option value="2">Last 2 Runs</option>
+                  <option selected value="2">Last 2 Runs</option>
                   <option value="3">Last 3 Runs</option>
-                  <option selected value="4">Last 4 Runs</option>
+                  <option  value="4">Last 4 Runs</option>
                   <option value="5">Last 5 Runs</option>
                   <option value="6">Last 6 Runs</option>
                   <option value="7">Last 7 Runs</option>
@@ -302,7 +272,7 @@ const Horses = () => {
                 disabled={isButtonDisabled}
               >
                 {isLoading ? (
-                  <div className="spinner-border animate-spin inline-block w-4 h-4 border-2 rounded-full"></div>
+                   <div className="spinner-border animate-spin inline-block w-4 h-4 border-2 border-orange-500 rounded-full"></div>
                 ) : (
                   "Analysis"
                 )}

@@ -6,6 +6,7 @@ import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import MeetingsDate from "@/components/Horses/MeetingsDate";
 import axios from "axios";
 import { FaCheck, FaTimes } from "react-icons/fa";  // Importing icons for check and cross
+import { useRouter } from 'next/router';
 
 const CleanBet = () => {
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0]);
@@ -15,15 +16,24 @@ const CleanBet = () => {
   const [delta, setDelta] = useState(1);
   const [avgPosition, setAvgPosition] = useState(2);
   const [totalRuns, setTotalRuns] = useState(10);
+  const [isLoading, setIsLoading] = useState(false);
+
 
   const baseURL = process.env.NEXT_PUBLIC_API_URL;
 
   useEffect(() => {
     const fetchPredictions = async () => {
       try {
-        const response = await axios.get(`${baseURL}/preparation/GetPredictions?event_date=${selectedDate}&delta=${delta}&avg_position=${avgPosition}&total_runs=${totalRuns}`);
+        const response = await axios.post(`${baseURL}/preparation/GetPredictions`, {
+          event_date: selectedDate,
+          delta: delta,
+          avg_position: avgPosition,
+          total_runs: totalRuns,
+          stake: totalBet,
 
+        });
 
+        setIsLoading(true);
 
         const predictionsData = response?.data?.predictions?.selections;
         const totalBetAmount = response?.data?.predictions?.total_bet;
@@ -40,6 +50,8 @@ const CleanBet = () => {
       } catch (error) {
         console.error("Error fetching predictions:", error);
         setPredictions([]);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -80,7 +92,7 @@ const CleanBet = () => {
   };
 
   const handlePredictionWinners = async () => {
-
+    setIsLoading(true);
 
     try {
       const response = await axios.post(`${baseURL}/preparation/PredictionWinners`, {
@@ -94,13 +106,16 @@ const CleanBet = () => {
 
     } catch (error) {
       console.error("Error fetching race picks:", error);
-    } 
+    } finally {
+      setIsLoading(false);
+
+    }
   };
 
 
-    console.log("Predictions data:", predictions);
+  console.log("Predictions data:", predictions);
 
- 
+
 
 
   return (
@@ -190,16 +205,22 @@ const CleanBet = () => {
             </select>
           </div>
         </div>
+
         <Link
           href="#"
-          className="inline-flex items-center justify-center rounded-md border border-primary px-10 py-4 text-center font-medium text-primary hover:bg-opacity-90 lg:px-8 xl:px-10 mr-4" // Added mr-4
+          className="inline-flex items-center justify-center rounded-md border border-green-500 px-10 py-4 text-center font-medium text-green-500 hover:bg-opacity-90 lg:px-8 xl:px-10 mr-4"
           onClick={handlePredictionWinners}
-          disabled={false}
+
         >
-          Get Winners
+          {isLoading ? (
+            <div className="spinner-border animate-spin inline-block w-4 h-4 border-2 border-orange-500 rounded-full"></div>
+
+          ) : (
+            "Get Winners"
+          )}
         </Link>
 
-        <div className="flex-grow xl:w-1/6">
+        {/* <div className="flex-grow xl:w-1/6">
           <div className="rounded-sm border border-stroke bg-grey-200 p-4 shadow-default dark:border-strokedark dark:bg-boxdark">
 
             <div className="flex justify-between items-center mb-2">
@@ -216,7 +237,7 @@ const CleanBet = () => {
               </span>
             </div>
           </div>
-        </div>
+        </div> */}
 
       </div>
 
@@ -230,7 +251,7 @@ const CleanBet = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {eventPredictions.map((prediction, index) => {
               // Determine if the selection is a win (e.g., position "1") or loss
-               const isWin = prediction.current_event_position[0] === "1";
+              const isWin = prediction.current_event_position[0] === "1";
 
 
 
@@ -290,11 +311,14 @@ const CleanBet = () => {
                     </div>
                   </div>
 
-                  {/* Divider */}
                   <div className="border-t border-stroke"></div>
-                  {/* if the selection win */}
-                  P&L for this event:&nbsp; {isWin ? `€${(prediction?.odds * 10).toFixed(2)}` : "€0.00"}
+                  {/* Calculate the P&L */}
+                  P&L for €10 bet in  this event:&nbsp;
+                  <span className={isWin && prediction?.current_event_price.split("/")[0] > 0 ? 'text-green-500' : 'text-red-500'}>
+                    {isWin ? `€${(prediction?.current_event_price.split("/")[0] * 10).toFixed(2)}` : "€0.00"}
+                  </span>
                 </div>
+
               );
             })}
           </div>
