@@ -21,6 +21,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/components/Racing/MeetingEvents.jsx", "src/components/Racing/ControlPanel.jsx", "src/components/Tables/TableOne.jsx", "src/components/Racing/MeetingsDate.jsx", "src/app/racing/meetings/page.jsx", "src/app/racing/dashboard/page.jsx", "src/app/racing/result/page.jsx", "src/app/racing/cleanbet/page.jsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/components/Racing/MeetingEvents.jsx", "src/components/Racing/ControlPanel.jsx", "src/components/Tables/TableOne.jsx", "src/components/Racing/MeetingsDate.jsx", "src/app/racing/meetings/page.jsx", "src/app/racing/dashboard/page.jsx", "src/app/racing/result/page.jsx", "src/app/racing/cleanbet/page.jsx", "src/components/Breadcrumbs/Breadcrumb.jsx"],
   "exclude": ["node_modules"]
 }

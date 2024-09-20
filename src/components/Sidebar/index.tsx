@@ -24,8 +24,9 @@ const menuGroups = [
         label: "Horse Racing",
         route: "#",
         children: [
-          { label: "UK & Ireland", route: "/racing/meetings" },
-          { label: "France", route: "/racing/stats" },
+          { label: "UK", route: "/racing/uk" },
+          { label: "Ireland", route: "/racing/ireland" },
+          { label: "France", route: "/racing/france" },
           { label: "Strike Rate", route: "/racing/stats" },
           { label: "Clean Bets", route: "/racing/cleanbet" },
         ],

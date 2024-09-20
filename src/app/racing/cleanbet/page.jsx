@@ -11,12 +11,16 @@ import { useRouter } from 'next/router';
 const CleanBet = () => {
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0]);
   const [predictions, setPredictions] = useState([]);
-  const [totalBet, setTotalBet] = useState(10);
-  const [totalProfit, setTotalProfit] = useState(0);
-  const [delta, setDelta] = useState(1);
-  const [avgPosition, setAvgPosition] = useState(2);
-  const [totalRuns, setTotalRuns] = useState(10);
+
+  // const [totalBet, setTotalBet] = useState('10');
+  // const [totalProfit, setTotalProfit] = useState('0');
+  const [delta, setDelta] = useState('1');
+  const [avgPosition, setAvgPosition] = useState('2');
+  const [totalRuns, setTotalRuns] = useState('10');
   const [isLoading, setIsLoading] = useState(false);
+  const [totalBet, setTotalBet] = useState(10.0);
+  const [totalReturn, setTotalReturn] = useState(0);
+
 
 
   const baseURL = process.env.NEXT_PUBLIC_API_URL;
@@ -36,10 +40,11 @@ const CleanBet = () => {
         setIsLoading(true);
 
         const predictionsData = response?.data?.predictions?.selections;
-        const totalBetAmount = response?.data?.predictions?.total_bet;
-        const totalProfitAmount = response?.data?.predictions?.total_return;
-        setTotalBet(totalBetAmount);
-        setTotalProfit(totalProfitAmount);
+        const ctotalBet = response?.data?.predictions?.total_bet;
+        const ctotalReturn = response?.data?.predictions?.total_return;
+
+        setTotalBet(ctotalBet);
+        setTotalReturn(ctotalReturn);
 
         if (Array.isArray(predictionsData)) {
           setPredictions(predictionsData);
@@ -100,7 +105,7 @@ const CleanBet = () => {
         delta: delta,
         avg_position: avgPosition,
         total_runs: totalRuns,
-        stake: totalBet,
+        stake: totalBet
 
       });
 
@@ -120,7 +125,7 @@ const CleanBet = () => {
 
   return (
     <DefaultLayout>
-      <Breadcrumb pageName="Clean Bets" />
+      <Breadcrumb pageName="Clean Bets" totalBet={totalBet} totalReturn={totalReturn} />
 
       <div className="flex mb-6">
 
@@ -220,25 +225,6 @@ const CleanBet = () => {
           )}
         </Link>
 
-        {/* <div className="flex-grow xl:w-1/6">
-          <div className="rounded-sm border border-stroke bg-grey-200 p-4 shadow-default dark:border-strokedark dark:bg-boxdark">
-
-            <div className="flex justify-between items-center mb-2">
-              <h2 className="text-lg">Bet:</h2>
-              <span className="text-lg flex items-center">
-                <span className="mr-1">€{totalBet}</span>
-              </span>
-            </div>
-
-            <div className="flex justify-between items-center">
-              <h2 className="text-lg">P&L:</h2>
-              <span className={`text-lg flex items-center ${(totalProfit - totalBet) > 0 ? 'text-green-500' : 'text-meta-1'}`}>
-                <span className="mr-1">€{totalProfit.toFixed(2)}</span>
-              </span>
-            </div>
-          </div>
-        </div> */}
-
       </div>
 
       {/* Render grouped predictions */}
@@ -313,11 +299,12 @@ const CleanBet = () => {
 
                   <div className="border-t border-stroke"></div>
                   {/* Calculate the P&L */}
-                  P&L for €10 bet in  this event:&nbsp;
+                  P&L for €10 bet in this event:&nbsp;
                   <span className={isWin && prediction?.current_event_price.split("/")[0] > 0 ? 'text-green-500' : 'text-red-500'}>
-                    {isWin ? `€${(prediction?.current_event_price.split("/")[0] * 10).toFixed(2)}` : "€0.00"}
+                    {isWin ? `€${((Number(prediction?.current_event_price.split("/")[0]) / Number(prediction?.current_event_price.split("/")[1])) * 10 + 10).toFixed(2)}` : "€0.00"}
                   </span>
                 </div>
+
 
               );
             })}

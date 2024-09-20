@@ -8,7 +8,7 @@ import TimeSelection from '@/components/Horses/TimeSelection';
 import Link from "next/link";
 import axios from "axios";
 
-const Horses = () => {
+const Horses = ({EventName}) => {
   const baseURL = process.env.NEXT_PUBLIC_API_URL;
 
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
@@ -47,7 +47,10 @@ const Horses = () => {
     const fetchMeetings = async () => {
       try {
         const response = await axios.get(`${baseURL}/preparation/GetTodayMeeting`, {
-          params: { date: selectedDate }
+          params: { 
+            date: selectedDate,
+            event_name: EventName
+          }
         });
         const meetingsData = response?.data || [];
         setMeetings(meetingsData);
@@ -102,10 +105,11 @@ const Horses = () => {
         try {
           const response = await axios.get(`${baseURL}/preparation/GetMeetingRunners`, {
             params: {
-              event_name: selectedMeeting,
+              meeting_name: selectedMeeting,
               event_time: selectedTime,
               event_date: selectedDate,
-              race_type: raceType
+              race_type: raceType,
+              event_name: EventName
             }
           });
           setRunners(response?.data?.analysisDataResponse || []);
@@ -253,8 +257,8 @@ const Horses = () => {
                   aria-label="Select a meeting"
                 >
                   <option value="1">Last Run Only</option>
-                  <option selected value="2">Last 2 Runs</option>
-                  <option value="3">Last 3 Runs</option>
+                  <option  value="2">Last 2 Runs</option>
+                  <option selected value="3">Last 3 Runs</option>
                   <option  value="4">Last 4 Runs</option>
                   <option value="5">Last 5 Runs</option>
                   <option value="6">Last 6 Runs</option>
